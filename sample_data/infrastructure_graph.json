@@ -1,0 +1,42 @@
+{
+  "nodes": [
+    {"id": "loc_100", "name": "loc_100", "type": "zone"},
+    {"id": "loc_101", "name": "loc_101", "type": "zone"},
+    {"id": "loc_102", "name": "loc_102", "type": "zone"},
+    {"id": "loc_103", "name": "loc_103", "type": "zone"},
+    {"id": "shelter_wayanad", "name": "Wayanad Shelter", "type": "safe"},
+    {"id": "hospital_wayanad", "name": "Wayanad Hospital", "type": "safe"}
+  ],
+  "edges": [
+    {
+      "from": "loc_100",
+      "to": "shelter_wayanad",
+      "road_id": "R100",
+      "passes_through_zone_id": "loc_101"
+    },
+    {
+      "from": "loc_101",
+      "to": "shelter_wayanad",
+      "road_id": "R101",
+      "passes_through_zone_id": null
+    },
+    {
+      "from": "loc_102",
+      "to": "loc_101",
+      "road_id": "R102",
+      "passes_through_zone_id": null
+    },
+    {
+      "from": "loc_102",
+      "to": "hospital_wayanad",
+      "road_id": "R103",
+      "passes_through_zone_id": "loc_101"
+    },
+    {
+      "from": "loc_103",
+      "to": "hospital_wayanad",
+      "road_id": "R104",
+      "passes_through_zone_id": null
+    }
+  ]
+}

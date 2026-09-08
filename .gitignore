@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Generated data artifacts (downloaded or produced; not committed)
+real_data/
+kerala_gsi_2022/
+kerala_srtm_30m.tif
+nasa_glc_raw.csv
+nasa_glc_enriched.csv
+training_data_ml.csv
+negative_samples.csv
+models/
+*.pkl
+*.joblib
+
+# Pipeline output (committed as snapshot for deployment)
+# landslide_risk_output.json
+pipeline.log
+run.out
+
+# Frontend
+node_modules/
+frontend/node_modules/
+frontend/dist/
+
+# OS cruft
+.DS_Store
+Thumbs.db
+desktop.ini
