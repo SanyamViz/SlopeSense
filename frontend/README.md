@@ -18,17 +18,15 @@ map. It consumes the FastAPI backend at `http://localhost:8000/risk-map`.
 ## Swap mock → real API
 
 All network access is in `src/api/riskClient.js`. The only tunable is
-`RISK_API_BASE`:
+`VITE_RISK_API_BASE`, which must be set in your deployment environment
+(e.g. Vercel) to point at the backend URL:
 
-```js
-export const RISK_API_BASE =
-  RUNTIME_BASE || "http://localhost:8000";
+```bash
+# Vercel Dashboard → Settings → Environment Variables
+VITE_RISK_API_BASE=https://your-backend-url.example.com
 ```
 
-The production backend URL is injected into `index.html` at build time
-via the Vite `transformIndexHtml` hook (see `vite.config.js`) and read
-at runtime through `window.RISK_API_BASE`. The `VITE_` public prefix is
-deliberately omitted so the value is not inlined into the JS bundle.
+For local development it defaults to `http://localhost:8000`.
 
 Point it at the real API and nothing else changes — the component layer only
 consumes the normalised shape returned by `/risk-map`.

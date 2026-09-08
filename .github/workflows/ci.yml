@@ -105,7 +105,7 @@ jobs:
 
       - name: Build frontend for Vercel
         env:
-          RISK_API_BASE: ${{ secrets.RISK_API_BASE }}
+          VITE_RISK_API_BASE: ${{ secrets.RISK_API_BASE }}
         run: |
           cd frontend
           npm ci
