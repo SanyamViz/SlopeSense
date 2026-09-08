@@ -65,7 +65,7 @@ export default function MapView({ locations, selectedId, onSelect }) {
   const centreLat = locations.length ? centre[0] / locations.length : 10.5;
   const centreLon = locations.length ? centre[1] / locations.length : 76.5;
   return (
-    <MapContainer center={[centreLat, centreLon]} zoom={7} minZoom={5} maxZoom={18} className="leaflet-map" zoomControl={false} doubleClickZoom={false}>
+    <MapContainer center={[centreLat, centreLon]} zoom={7} minZoom={5} maxZoom={18} style={{ height: "100%", width: "100%", minHeight: "460px" }} zoomControl={false} doubleClickZoom={false}>
       <TileLayer url={TILE_URL} attribution={TILE_ATTR} />
       {locations.map((loc) => (
         <MarkerFor key={loc.location_id} loc={loc} selectedId={selectedId} onSelect={onSelect} />
