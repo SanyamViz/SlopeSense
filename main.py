@@ -24,6 +24,7 @@ from fastapi.responses import JSONResponse
 
 from config import CONFIG
 from scoring import score_single_location
+from graph_analysis import compute_impact_assessment
 
 logger = logging.getLogger("backend")
 OUTPUT_PATH = Path(CONFIG["output"])
@@ -87,6 +88,7 @@ def index():
             "alerts": "GET /alerts/active -- locations >= threshold, sorted by severity",
             "reload": "GET /reload -- reload output JSON",
             "infrastructure": "GET /infrastructure -- graph + stranded zones",
+            "impact-assessment": "GET /impact-assessment -- hospitals nearby, capacity, alternative routes",
             "docs": "GET /docs -- interactive Swagger UI",
         },
     }
@@ -114,6 +116,30 @@ def infrastructure():
     if infra is None:
         raise HTTPException(status_code=404, detail="No infrastructure data in current document")
     return infra
+
+
+@app.get("/impact-assessment", tags=["risk"])
+def impact_assessment(radius_km: float = Query(default=20.0, ge=1.0, le=200.0, description="Search radius in km for nearby hospitals/safe places.")):
+    """Return per-zone hospital proximity, available capacity, and alternative routes.
+
+    For each location, returns:
+      - nearby hospitals/safe places within ``radius_km`` with capacity info
+      - nearby_hospital_count
+      - total_available_capacity_nearby
+      - alternative evacuation routes if the zone is high/severe and primary roads are blocked
+    """
+    infra = _DOC.get("infrastructure")
+    if infra is None:
+        raise HTTPException(status_code=404, detail="No infrastructure data in current document")
+    edges = infra.get("edges", [])
+    nodes = infra.get("nodes", [])
+    result = compute_impact_assessment(
+        edges=edges,
+        scored_locations=_DOC.get("locations", []),
+        nodes=nodes,
+        hospital_radius_km=radius_km,
+    )
+    return result
 
 
 @app.get("/alerts/active", tags=["risk"])

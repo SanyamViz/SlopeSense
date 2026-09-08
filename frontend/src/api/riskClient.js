@@ -11,10 +11,25 @@
  *       alert: { message_en, message_local, recommended_action } } ] }
  */
 
-/** Base URL of the risk API. Override via env (VITE_RISK_API_BASE) at build
- *  time, or edit this constant for a different mock/real endpoint. */
+/**
+ * Base URL of the risk API. Resolution order (first non-empty wins):
+ *   1. Runtime override window.RISK_API_BASE (injected via index.html at
+ *      build time, or set externally) -- retargets the backend without
+ *      rebuilding the SPA.
+ *   2. Fallback http://localhost:8000 (local dev with the API on :8000).
+ *
+ *   Note: the VITE_ public prefix is intentionally NOT used. Public prefixes
+ *   cause Vite to inline the value into the JS bundle at build time, which
+ *   exposes it to the browser. Instead, the value is injected into the served
+ *   index.html at build time (see vite.config.js transformIndexHtml hook).
+ */
+const RUNTIME_BASE =
+  typeof window !== "undefined" && window.RISK_API_BASE
+    ? String(window.RISK_API_BASE).replace(/\/$/, "")
+    : null;
+
 export const RISK_API_BASE =
-  (typeof import.meta !== "undefined" && import.meta.env?.VITE_RISK_API_BASE) ||
+  RUNTIME_BASE ||
   "http://localhost:8000";
 
 /** Fetch the full risk document. Throws on non-2xx so callers can show errors. */
@@ -99,6 +114,21 @@ export async function fetchReload() {
   });
   if (!res.ok) {
     throw new Error(`Risk API /reload returned ${res.status}`);
+  }
+  return res.json();
+}
+
+/**
+ * Fetch impact assessment: nearby hospitals, available capacity, and alternative
+ * evacuation routes for every zone.
+ */
+export async function fetchImpactAssessment(radiusKm = 20) {
+  const res = await fetch(
+    `${RISK_API_BASE}/impact-assessment?radius_km=${encodeURIComponent(radiusKm)}`,
+    { headers: { Accept: "application/json" } },
+  );
+  if (!res.ok) {
+    throw new Error(`Risk API /impact-assessment returned ${res.status}`);
   }
   return res.json();
 }

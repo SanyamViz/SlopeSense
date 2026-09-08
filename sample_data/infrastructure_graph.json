@@ -1,11 +1,11 @@
 {
   "nodes": [
-    {"id": "loc_100", "name": "loc_100", "type": "zone"},
-    {"id": "loc_101", "name": "loc_101", "type": "zone"},
-    {"id": "loc_102", "name": "loc_102", "type": "zone"},
-    {"id": "loc_103", "name": "loc_103", "type": "zone"},
-    {"id": "shelter_wayanad", "name": "Wayanad Shelter", "type": "safe"},
-    {"id": "hospital_wayanad", "name": "Wayanad Hospital", "type": "safe"}
+    {"id": "loc_100", "name": "Village 100", "type": "zone", "district": "Wayanad", "lat": 11.71, "lon": 76.25},
+    {"id": "loc_101", "name": "Village 101", "type": "zone", "district": "Wayanad", "lat": 11.72, "lon": 76.26},
+    {"id": "loc_102", "name": "Village 102", "type": "zone", "district": "Wayanad", "lat": 11.73, "lon": 76.24},
+    {"id": "loc_103", "name": "Village 103", "type": "zone", "district": "Wayanad", "lat": 11.70, "lon": 76.23},
+    {"id": "shelter_wayanad", "name": "Wayanad Shelter", "type": "safe", "subtype": "shelter", "lat": 11.74, "lon": 76.27, "capacity_total": 500, "capacity_filled": 320},
+    {"id": "hospital_wayanad", "name": "Wayanad Hospital", "type": "safe", "subtype": "hospital", "lat": 11.715, "lon": 76.28, "capacity_total": 800, "capacity_filled": 720}
   ],
   "edges": [
     {

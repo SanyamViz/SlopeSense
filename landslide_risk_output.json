@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-09-08T17:45:26Z",
+    "generated_at": "2026-09-08T18:55:15Z",
     "model_version": "weighted-v1.0",
     "weights_used": {
       "slope_angle": 0.35,
@@ -164,7 +164,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -269,7 +269,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -374,7 +374,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -479,7 +479,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -584,7 +584,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -689,7 +689,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -794,7 +794,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -899,7 +899,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -1004,7 +1004,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -1109,7 +1109,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -1214,7 +1214,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -1319,7 +1319,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -1424,7 +1424,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -1529,7 +1529,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -1634,7 +1634,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -1739,7 +1739,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -1844,7 +1844,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -1949,7 +1949,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -2054,7 +2054,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -2159,7 +2159,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -2264,7 +2264,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -2369,7 +2369,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -2474,7 +2474,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -2579,7 +2579,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -2684,7 +2684,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -2789,7 +2789,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -2894,7 +2894,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -2999,7 +2999,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -3104,7 +3104,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -3209,7 +3209,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -3314,7 +3314,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -3419,7 +3419,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -3524,7 +3524,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -3629,7 +3629,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -3734,7 +3734,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -3839,7 +3839,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -3944,7 +3944,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -4049,7 +4049,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -4154,7 +4154,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -4259,7 +4259,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -4364,7 +4364,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -4469,7 +4469,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -4574,7 +4574,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -4679,7 +4679,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -4784,7 +4784,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -4889,7 +4889,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -4994,7 +4994,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -5099,7 +5099,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -5204,7 +5204,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -5309,7 +5309,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -5414,7 +5414,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -5519,7 +5519,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -5624,7 +5624,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -5729,7 +5729,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -5834,7 +5834,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -5939,7 +5939,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -6044,7 +6044,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -6149,7 +6149,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -6254,7 +6254,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -6359,7 +6359,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -6464,7 +6464,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -6569,7 +6569,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -6674,7 +6674,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -6779,7 +6779,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -6884,7 +6884,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -6989,7 +6989,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -7094,7 +7094,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -7199,7 +7199,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -7304,7 +7304,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -7409,7 +7409,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -7514,7 +7514,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -7619,7 +7619,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -7724,7 +7724,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -7829,7 +7829,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -7934,7 +7934,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -8039,7 +8039,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -8144,7 +8144,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -8249,7 +8249,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -8354,7 +8354,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -8459,7 +8459,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -8564,7 +8564,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -8669,7 +8669,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -8774,7 +8774,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -8879,7 +8879,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -8984,7 +8984,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -9089,7 +9089,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -9194,7 +9194,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -9299,7 +9299,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -9404,7 +9404,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -9509,7 +9509,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -9614,7 +9614,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -9719,7 +9719,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -9824,7 +9824,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -9929,7 +9929,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -10034,7 +10034,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -10139,7 +10139,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -10244,7 +10244,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -10349,7 +10349,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -10454,7 +10454,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -10559,7 +10559,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -10664,7 +10664,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -10683,7 +10683,7 @@
         "stranded": true,
         "blocked_by_zone": "loc_101",
         "isolated_from": [],
-        "reason": "loc_100 itself is moderate risk, but is cut off from all shelters/hospitals if loc_101 slides."
+        "reason": "Village 100 itself is moderate risk, but is cut off from all shelters/hospitals if Village 101 slides."
       }
     },
     {
@@ -10774,7 +10774,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -10879,7 +10879,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -10984,7 +10984,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -11089,7 +11089,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -11194,7 +11194,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -11299,7 +11299,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -11404,7 +11404,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -11509,7 +11509,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -11614,7 +11614,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -11719,7 +11719,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -11824,7 +11824,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -11929,7 +11929,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -12034,7 +12034,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -12139,7 +12139,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -12244,7 +12244,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -12349,7 +12349,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -12454,7 +12454,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -12559,7 +12559,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -12664,7 +12664,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -12769,7 +12769,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -12874,7 +12874,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -12979,7 +12979,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -13084,7 +13084,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -13189,7 +13189,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -13294,7 +13294,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -13399,7 +13399,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -13504,7 +13504,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -13609,7 +13609,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -13714,7 +13714,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -13819,7 +13819,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -13924,7 +13924,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -14029,7 +14029,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -14134,7 +14134,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -14239,7 +14239,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -14344,7 +14344,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -14449,7 +14449,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -14554,7 +14554,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -14659,7 +14659,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -14764,7 +14764,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -14869,7 +14869,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -14974,7 +14974,7 @@
         "confidence_note": "Consider secondary confirmation"
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -15079,7 +15079,7 @@
         "confidence_note": null
       },
       "data_freshness": {
-        "rainfall_data_timestamp": "2026-09-08T17:45:25.940681+00:00",
+        "rainfall_data_timestamp": "2026-09-08T18:55:15.057962+00:00",
         "soil_data_source": "static_survey_2023"
       },
       "alert": {
@@ -15101,33 +15101,55 @@
     "nodes": [
       {
         "id": "loc_100",
-        "name": "loc_100",
-        "type": "zone"
+        "name": "Village 100",
+        "type": "zone",
+        "district": "Wayanad",
+        "lat": 11.71,
+        "lon": 76.25
       },
       {
         "id": "shelter_wayanad",
         "name": "Wayanad Shelter",
-        "type": "safe"
+        "type": "safe",
+        "subtype": "shelter",
+        "lat": 11.74,
+        "lon": 76.27,
+        "capacity_total": 500,
+        "capacity_filled": 320
       },
       {
         "id": "loc_101",
-        "name": "loc_101",
-        "type": "zone"
+        "name": "Village 101",
+        "type": "zone",
+        "district": "Wayanad",
+        "lat": 11.72,
+        "lon": 76.26
       },
       {
         "id": "loc_102",
-        "name": "loc_102",
-        "type": "zone"
+        "name": "Village 102",
+        "type": "zone",
+        "district": "Wayanad",
+        "lat": 11.73,
+        "lon": 76.24
       },
       {
         "id": "hospital_wayanad",
         "name": "Wayanad Hospital",
-        "type": "safe"
+        "type": "safe",
+        "subtype": "hospital",
+        "lat": 11.715,
+        "lon": 76.28,
+        "capacity_total": 800,
+        "capacity_filled": 720
       },
       {
         "id": "loc_103",
-        "name": "loc_103",
-        "type": "zone"
+        "name": "Village 103",
+        "type": "zone",
+        "district": "Wayanad",
+        "lat": 11.7,
+        "lon": 76.23
       }
     ],
     "edges": [
@@ -15167,7 +15189,7 @@
         "zone_id": "loc_100",
         "blocked_by_zone_id": "loc_101",
         "isolated_from": [],
-        "reason": "loc_100 itself is moderate risk, but is cut off from all shelters/hospitals if loc_101 slides."
+        "reason": "Village 100 itself is moderate risk, but is cut off from all shelters/hospitals if Village 101 slides."
       }
     ],
     "structural_analysis": {
@@ -15204,6 +15226,171 @@
           "R104"
         ]
       ]
+    }
+  },
+  "impact_assessment": {
+    "zones": [
+      {
+        "zone_id": "loc_100",
+        "zone_name": "Village 101",
+        "district": "Pathanamthitta",
+        "risk_level": "moderate",
+        "coordinates": {
+          "lat": 11.975461,
+          "lon": 75.672225
+        },
+        "nearby_safe_nodes": [
+          {
+            "id": "hospital_wayanad",
+            "name": "Wayanad Hospital",
+            "subtype": "hospital",
+            "distance_km": 3.31,
+            "capacity_total": 800,
+            "capacity_filled": 720,
+            "capacity_available": 80
+          },
+          {
+            "id": "shelter_wayanad",
+            "name": "Wayanad Shelter",
+            "subtype": "shelter",
+            "distance_km": 3.98,
+            "capacity_total": 500,
+            "capacity_filled": 320,
+            "capacity_available": 180
+          }
+        ],
+        "nearby_hospital_count": 1,
+        "alternative_routes": null,
+        "total_available_capacity_nearby": 260
+      },
+      {
+        "zone_id": "loc_101",
+        "zone_name": "Vagamon",
+        "district": "Kottayam",
+        "risk_level": "severe",
+        "coordinates": {
+          "lat": 9.6833,
+          "lon": 76.9167
+        },
+        "nearby_safe_nodes": [
+          {
+            "id": "hospital_wayanad",
+            "name": "Wayanad Hospital",
+            "subtype": "hospital",
+            "distance_km": 2.25,
+            "capacity_total": 800,
+            "capacity_filled": 720,
+            "capacity_available": 80
+          },
+          {
+            "id": "shelter_wayanad",
+            "name": "Wayanad Shelter",
+            "subtype": "shelter",
+            "distance_km": 2.48,
+            "capacity_total": 500,
+            "capacity_filled": 320,
+            "capacity_available": 180
+          }
+        ],
+        "nearby_hospital_count": 1,
+        "alternative_routes": [
+          {
+            "safe_node_id": "shelter_wayanad",
+            "safe_node_name": "Wayanad Shelter",
+            "path": [
+              "loc_101",
+              "shelter_wayanad"
+            ],
+            "hops": 1,
+            "estimated_distance_km": 5.5,
+            "blocked_road_ids_on_route": []
+          },
+          {
+            "safe_node_id": "hospital_wayanad",
+            "safe_node_name": "Wayanad Hospital",
+            "path": null,
+            "hops": null,
+            "estimated_distance_km": null,
+            "blocked_road_ids_on_route": [],
+            "unreachable": true
+          }
+        ],
+        "total_available_capacity_nearby": 260
+      },
+      {
+        "zone_id": "loc_102",
+        "zone_name": "Village 103",
+        "district": "Idukki",
+        "risk_level": "moderate",
+        "coordinates": {
+          "lat": 9.693838,
+          "lon": 76.269625
+        },
+        "nearby_safe_nodes": [
+          {
+            "id": "shelter_wayanad",
+            "name": "Wayanad Shelter",
+            "subtype": "shelter",
+            "distance_km": 3.45,
+            "capacity_total": 500,
+            "capacity_filled": 320,
+            "capacity_available": 180
+          },
+          {
+            "id": "hospital_wayanad",
+            "name": "Wayanad Hospital",
+            "subtype": "hospital",
+            "distance_km": 4.66,
+            "capacity_total": 800,
+            "capacity_filled": 720,
+            "capacity_available": 80
+          }
+        ],
+        "nearby_hospital_count": 1,
+        "alternative_routes": null,
+        "total_available_capacity_nearby": 260
+      },
+      {
+        "zone_id": "loc_103",
+        "zone_name": "Village 104",
+        "district": "Ernakulam",
+        "risk_level": "moderate",
+        "coordinates": {
+          "lat": 12.190576,
+          "lon": 76.688382
+        },
+        "nearby_safe_nodes": [
+          {
+            "id": "hospital_wayanad",
+            "name": "Wayanad Hospital",
+            "subtype": "hospital",
+            "distance_km": 5.69,
+            "capacity_total": 800,
+            "capacity_filled": 720,
+            "capacity_available": 80
+          },
+          {
+            "id": "shelter_wayanad",
+            "name": "Wayanad Shelter",
+            "subtype": "shelter",
+            "distance_km": 6.22,
+            "capacity_total": 500,
+            "capacity_filled": 320,
+            "capacity_available": 180
+          }
+        ],
+        "nearby_hospital_count": 1,
+        "alternative_routes": null,
+        "total_available_capacity_nearby": 260
+      }
+    ],
+    "summary": {
+      "total_zones": 4,
+      "total_zones_at_risk": 1,
+      "zones_with_hospitals_nearby": 4,
+      "zones_with_no_hospitals_nearby": 0,
+      "total_available_capacity_nearby": 1040,
+      "search_radius_km": 20.0
     }
   }
 }

@@ -69,7 +69,7 @@ def build_alert(risk_score, risk_level, factors, location_name="this location"):
     }
 
 
-def export_results(cfg, locations, out_path, infrastructure=None):
+def export_results(cfg, locations, out_path, infrastructure=None, impact_assessment=None):
     """Write the final risk JSON document to `out_path`."""
     # Summary
     counts = {"low": 0, "moderate": 0, "high": 0, "severe": 0}
@@ -100,6 +100,8 @@ def export_results(cfg, locations, out_path, infrastructure=None):
     doc = {"metadata": metadata, "summary": summary, "locations": locations}
     if infrastructure is not None:
         doc["infrastructure"] = infrastructure
+    if impact_assessment is not None:
+        doc["impact_assessment"] = impact_assessment
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(doc, f, indent=2, ensure_ascii=False)
     logger.info("Wrote %d locations to %s", len(locations), out_path)

@@ -36,9 +36,15 @@ run.out
 # Frontend
 node_modules/
 frontend/node_modules/
+frontend/.vite/
 frontend/dist/
 
 # OS cruft
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Local env secrets
+.env
+.env.*
+!.env.example

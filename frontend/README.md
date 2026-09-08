@@ -22,8 +22,13 @@ All network access is in `src/api/riskClient.js`. The only tunable is
 
 ```js
 export const RISK_API_BASE =
-  import.meta.env?.VITE_RISK_API_BASE || "http://localhost:8000";
+  RUNTIME_BASE || "http://localhost:8000";
 ```
+
+The production backend URL is injected into `index.html` at build time
+via the Vite `transformIndexHtml` hook (see `vite.config.js`) and read
+at runtime through `window.RISK_API_BASE`. The `VITE_` public prefix is
+deliberately omitted so the value is not inlined into the JS bundle.
 
 Point it at the real API and nothing else changes — the component layer only
 consumes the normalised shape returned by `/risk-map`.

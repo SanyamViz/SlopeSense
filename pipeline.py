@@ -22,7 +22,7 @@ from scoring import WeightedScorer
 from classification import classify
 from export import export_results
 from trust_score import load_alert_history, build_trust_block
-from graph_analysis import analyze as analyze_infrastructure
+from graph_analysis import analyze as analyze_infrastructure, compute_impact_assessment
 from vulnerability import compute_vulnerability_score
 from priority import compute_priority_score
 
@@ -244,13 +244,21 @@ def main(scorer=None):
             }
         for loc in locations:
             loc["cascading_risk"] = stranded_map.get(loc["location_id"])
+
+        impact = compute_impact_assessment(
+            infra_data.get("edges", []),
+            locations,
+            nodes=infra_data.get("nodes"),
+            hospital_radius_km=20.0,
+        )
     else:
         logger.info("No infrastructure_graph.json found -- skipping cascading-risk analysis.")
         infra_result = None
+        impact = None
         for loc in locations:
             loc["cascading_risk"] = None
 
-    doc = export_results(cfg, locations, cfg["output"], infra_result)
+    doc = export_results(cfg, locations, cfg["output"], infra_result, impact)
     # Echo the schema-validated summary to stdout.
     s = doc["summary"]
     logger.info("Counts by risk level: %s", s["counts_by_risk_level"])

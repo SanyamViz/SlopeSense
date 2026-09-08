@@ -1,4 +1,5 @@
 ﻿import { levelColor, RISK_LABELS, factorLabel, factorUnit } from "../constants/risk";
+import RiskExplanationPanel from "./RiskExplanationPanel";
 
 function BarChart({ factors }) {
   if (!factors || factors.length === 0) return <div className="chart-empty">No factor data available.</div>;
@@ -86,6 +87,7 @@ export default function SidePanel({ location, riskRank, priorityRank, rankMode =
         <h3>Contributing factors</h3>
         <BarChart factors={location.factors} />
       </section>
+      <RiskExplanationPanel factors={location.factors} />
       <section className="panel-section">
         <h3>Alert message</h3>
         <div className="alert-msg en"><span className="alert-lang-tag">EN</span><p>{location.alert?.message_en || "—"}</p></div>
