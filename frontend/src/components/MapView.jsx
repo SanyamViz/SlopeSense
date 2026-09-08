@@ -3,8 +3,8 @@ import L from "leaflet";
 import { levelColor, scoreToLevel } from "../constants/risk";
 import SortToggle from "./SortToggle";
 
-const TILE_URL = "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png";
-const TILE_ATTR = '© <a href="https://stadiamaps.com/">Stadia Maps</a> © <a href="https://openmaptile.org/">OpenMapTiles</a> © OpenStreetMap';
+const TILE_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+const TILE_ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
 function MarkerFor({ loc, selectedId, onSelect }) {
   const level = loc.risk_level || scoreToLevel(loc.risk_score, null);

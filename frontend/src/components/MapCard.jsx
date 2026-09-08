@@ -1,9 +1,9 @@
 import React from "react";
 import MapView from "./MapView";
 
-export default function MapCard({ locations, selectedId, onSelect, isSevere, isCriticalSeverance }) {
+export default function MapCard({ locations, selectedId, onSelect, isSevere, isCriticalSeverance, className }) {
   return (
-    <section className="map-card">
+    <section className={`map-card ${className || ""}`}>
       <div className="card-head">
         <div>
           <div className="flex items-center gap-2">

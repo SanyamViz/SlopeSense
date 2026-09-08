@@ -62,8 +62,8 @@ export default function App() {
       <main className="w-full px-4 md:px-8 py-5 flex-grow space-y-5">
         <HeroSuite {...hero} isSevere={isSevere} isCriticalSeverance={isCriticalSeverance} />
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
-          <MapCard locations={locations} selectedId={selectedId} onSelect={setSelectedId} isSevere={isSevere} isCriticalSeverance={isCriticalSeverance} />
-          <ActionStackCard rows={stackRows} advisory={advisory} isSevere={isSevere} onDispatch={handleDispatch} />
+          <MapCard className="lg:col-span-8" locations={locations} selectedId={selectedId} onSelect={setSelectedId} isSevere={isSevere} isCriticalSeverance={isCriticalSeverance} />
+          <ActionStackCard className="lg:col-span-4" rows={stackRows} advisory={advisory} isSevere={isSevere} onDispatch={handleDispatch} />
         </div>
         <CrisisForecastSimulator rain={rain} soil={soil} onRainChange={setRain} onSoilChange={setSoil} onBaseline={() => { setRain(15); setSoil(14); }} onSevere={() => { setRain(95); setSoil(52); }} onReset={() => { setRain(75); setSoil(38); }} tiles={tiles} />
       </main>

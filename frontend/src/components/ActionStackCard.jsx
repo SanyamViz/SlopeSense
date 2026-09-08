@@ -1,9 +1,9 @@
 import { levelColor, RISK_LABELS } from "../constants/risk";
 
 /** Priority Action Stack card with integrated ground advisory lockup. */
-export default function ActionStackCard({ rows, advisory, isSevere, onDispatch }) {
+export default function ActionStackCard({ rows, advisory, isSevere, onDispatch, className }) {
   return (
-    <section className="action-stack-card">
+    <section className={`action-stack-card ${className || ""}`}>
       <div className="card-head">
         <h2 className="card-title">
           <span className="dot" />PRIORITY ACTION STACK
