@@ -45,27 +45,7 @@ export function buildStackRows(locations, isSevere, isCriticalSeverance) {
         trustBadge: "GROUND CORPS ON-SITE", trustBadgeBg: "#ECFDF5", trustBadgeColor: "#059669", trustColor: "#15803D",
         roadStatus: "Shelter: Higher Secondary School", roadColor: "#1C1917",
       }),
-      makeRow(attamala, 3, {
-        status: "HIGH", statusBg: "#FEF3C7", statusColor: "#B45309",
-        riskBg: "#FEF3C7", riskColor: "#B45309", riskLabel: "Risk 78",
-        trustText: "68% (11/16 accurate)",
-        trustBadge: isCriticalSeverance ? "⚠️ SECONDARY VERIFICATION ADVISED" : "Secondary Verification",
-        trustBadgeBg: isCriticalSeverance ? "#FEF3C7" : "#FDE68A",
-        trustBadgeColor: isCriticalSeverance ? "#B45309" : "#92400E",
-        trustColor: "#B45309",
-        roadStatus: "Cut Off Spur", roadColor: "#0284C7",
-      }),
-      makeRow(punjirimattom, 4, {
-        status: "SEVERE", statusBg: "#FEE2E2", statusColor: "#DC2626",
-        riskBg: "#FEE2E2", riskColor: "#DC2626", riskLabel: "Risk 96",
-        trustText: "64% (9/14 accurate)",
-        trustBadge: isCriticalSeverance ? "⚠️ SECONDARY VERIFICATION ADVISED" : "Secondary Verification",
-        trustBadgeBg: isCriticalSeverance ? "#FEF3C7" : "#FDE68A",
-        trustBadgeColor: isCriticalSeverance ? "#B45309" : "#92400E",
-        trustColor: "#B45309",
-        roadStatus: "Origin Catchment", roadColor: "#DC2626",
-      }),
-    ];
+    ].filter(Boolean);
   }
   return [
     makeRow(punjirimattom, 1, {
@@ -89,14 +69,7 @@ export function buildStackRows(locations, isSevere, isCriticalSeverance) {
       trustBadge: "NO ROAD CUT-OFF", trustBadgeBg: "#ECFDF5", trustBadgeColor: "#059669", trustColor: "#15803D",
       roadStatus: "Road Passable", roadColor: "#15803D",
     }),
-    makeRow(attamala, 4, {
-      status: "OPEN", statusBg: "#ECFDF5", statusColor: "#15803D",
-      riskBg: "#ECFDF5", riskColor: "#15803D", riskLabel: "Risk 40",
-      trustText: "Drainage: Stable",
-      trustBadge: "NORMAL ACCESS", trustBadgeBg: "#ECFDF5", trustBadgeColor: "#15803D", trustColor: "#15803D",
-      roadStatus: "Spur clear", roadColor: "#737688",
-    }),
-  ];
+  ].filter(Boolean);
 }
 
 export function computeHero(locations, isSevere, isCriticalSeverance) {
