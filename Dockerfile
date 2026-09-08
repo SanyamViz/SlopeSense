@@ -43,4 +43,4 @@ EXPOSE 8000
 # Run the pipeline once on container start, then serve.
 # HACKATHON NOTE: --reload is omitted in production; data is regenerated
 # by re-running the pipeline separately or via GET /reload.
-CMD python pipeline.py && uvicorn main:app --host 0.0.0.0 --port 8000
+CMD uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}
