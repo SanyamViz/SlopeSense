@@ -8,10 +8,12 @@ import AlertRibbon from "./components/AlertRibbon";
 import HeroSuite from "./components/HeroSuite";
 import MapCard from "./components/MapCard";
 import ActionStackCard from "./components/ActionStackCard";
+import SidePanel from "./components/SidePanel";
 import CrisisForecastSimulator from "./components/CrisisForecastSimulator";
+import InfrastructureGraph from "./components/InfrastructureGraph";
 import DispatchModal from "./components/DispatchModal";
 import Toast from "./components/Toast";
-import { buildStackRows, computeHero, computeAdvisory, computeTiles } from "./engine";
+import { buildStackRows, computeHero, computeAdvisory } from "./engine";
 import { playSiren } from "./hooks/useSiren";
 
 export default function App() {
@@ -55,6 +57,11 @@ export default function App() {
   const handleDispatch = (id) => { setModalSector(id); setModalOpen(true); };
   const handleTransmit = (sector) => { setModalOpen(false); playSiren(); setToast({ key: Date.now(), sector }); };
 
+  const selectedLocation = useMemo(() => {
+    if (!selectedId) return null;
+    return locations.find((l) => l.location_id === selectedId) || null;
+  }, [locations, selectedId]);
+
   return (
     <div className="app">
       <MastheadMicro title="EMERGENCY DISPATCH · WAYANAD DISTRICT HQ" cycle="CYCLE #1,482 · DOPPLER SYNCED" live="19:15:11 IST" />
@@ -64,18 +71,23 @@ export default function App() {
         <HeroSuite {...hero} isSevere={isSevere} isCriticalSeverance={isCriticalSeverance} />
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
           <MapCard className="lg:col-span-8" locations={locations} selectedId={selectedId} onSelect={setSelectedId} isSevere={isSevere} isCriticalSeverance={isCriticalSeverance} />
-          <ActionStackCard className="lg:col-span-4" rows={stackRows} advisory={advisory} isSevere={isSevere} onDispatch={handleDispatch} />
+          <div className="lg:col-span-4">
+            {selectedLocation
+              ? <SidePanel location={selectedLocation} />
+              : <ActionStackCard rows={stackRows} advisory={advisory} isSevere={isSevere} onDispatch={handleDispatch} />}
+          </div>
         </div>
-        <CrisisForecastSimulator rain={rain} soil={soil} onRainChange={setRain} onSoilChange={setSoil} onBaseline={() => { setRain(15); setSoil(14); }} onSevere={() => { setRain(95); setSoil(52); }} onReset={() => { setRain(75); setSoil(38); }} tiles={tiles} />
+        <CrisisForecastSimulator rain={rain} soil={soil} onRainChange={setRain} onSoilChange={setSoil} onBaseline={() => { setRain(15); setSoil(14); }} onSevere={() => { setRain(95); setSoil(52); }} onReset={() => { setRain(75); setSoil(38); }} locations={locations} selectedId={selectedId} />
+        <InfrastructureGraph locations={locations} />
       </main>
       <footer className="app-footer">
         <div className="foot-left">
-          <span className="foot-item"><span className="dot" />STATION SENSORS: <span className="foot-val">42/44 ONLINE</span></span>
-          <span className="foot-item">INFERENCE LATENCY: <span className="foot-latency">14ms</span></span>
-          <span className="foot-item">GRAPH ENGINE: <span className="foot-graph">NetworkX v3.2 (WebSocket Synced)</span></span>
+          <span className="foot-item"><span className="dot" />STATION SENSORS: <span className="foot-val">—</span><span className="foot-illustrative">illustrative</span></span>
+          <span className="foot-item">INFERENCE LATENCY: <span className="foot-latency">—</span><span className="foot-illustrative">illustrative</span></span>
+          <span className="foot-item">GRAPH ENGINE: <span className="foot-graph">NetworkX</span><span className="foot-illustrative">illustrative</span></span>
         </div>
         <div className="foot-right">
-          <span className="foot-model">MODEL: <span className="model-name">GradientBoost-Landslide v4.1</span></span>
+          <span className="foot-model">MODEL: <span className="model-name">{doc?.metadata?.model_version || "WeightedScorer"}</span></span>
           <span className="foot-command">COMMAND CELL: WAYANAD DISTRICT HQ</span>
         </div>
       </footer>
