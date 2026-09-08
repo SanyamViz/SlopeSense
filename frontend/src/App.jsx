@@ -13,7 +13,7 @@ import CrisisForecastSimulator from "./components/CrisisForecastSimulator";
 import InfrastructureGraph from "./components/InfrastructureGraph";
 import DispatchModal from "./components/DispatchModal";
 import Toast from "./components/Toast";
-import { buildStackRows, computeHero, computeAdvisory, computeTiles } from "./engine";
+import { buildStackRows, computeHero, computeAdvisory, computeTiles } from "./engine"; // deploy bump
 import { playSiren } from "./hooks/useSiren";
 
 export default function App() {
