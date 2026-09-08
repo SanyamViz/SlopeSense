@@ -1,0 +1,24 @@
+# Render deployment spec for the FastAPI backend.
+# Deploy via: https://dashboard.render.com/yaml?repo=<your-repo-url>
+#
+# This service builds the Docker image at the repo root (Dockerfile builds the
+# frontend assets inside the image AND serves the backend), so a single Render
+# service can host both the API and the pre-built dashboard. If you want the
+# frontend served by Vercel instead, set FRONTEND_URL and keep this as API-only.
+#
+# Required secret (set in the Render dashboard -> Environment):
+#   OPENTOPO_API_KEY  (only needed if you re-run prepare_real_data.py)
+
+services:
+  - type: web
+    name: slopesense-api
+    env: python
+    region: oregon
+    plan: starter
+    buildCommand: pip install -r requirements.txt && python pipeline.py
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PORT
+        value: "8000"
+      - key: PYTHON_VERSION
+        value: "3.12"
