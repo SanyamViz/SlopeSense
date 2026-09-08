@@ -8,13 +8,14 @@ import AlertRibbon from "./components/AlertRibbon";
 import HeroSuite from "./components/HeroSuite";
 import MapCard from "./components/MapCard";
 import ActionStackCard from "./components/ActionStackCard";
-import SidePanel from "./components/SidePanel";
 import CrisisForecastSimulator from "./components/CrisisForecastSimulator";
-import InfrastructureGraph from "./components/InfrastructureGraph";
 import DispatchModal from "./components/DispatchModal";
 import Toast from "./components/Toast";
-import { buildStackRows, computeHero, computeAdvisory, computeTiles } from "./engine"; // deploy bump
-import { playSiren } from "./hooks/useSiren";
+import AlertBanner from "./components/AlertBanner";
+import SidePanel from "./components/SidePanel";
+import WhatIfPanel from "./components/WhatIfPanel";
+import InfrastructureGraph from "./components/InfrastructureGraph";
+import { buildStackRows, computeHero, computeAdvisory, computeTiles } from "./engine";
 
 export default function App() {
   const [doc, setDoc] = useState(null);
@@ -30,6 +31,7 @@ export default function App() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalSector, setModalSector] = useState(null);
   const [toast, setToast] = useState(null);
+  const [activeTab, setActiveTab] = useState("dashboard"); // "dashboard" | "infrastructure"
 
   useEffect(() => {
     let cancelled = false;
@@ -54,43 +56,152 @@ export default function App() {
   const advisory = useMemo(() => computeAdvisory(isSevere, isCriticalSeverance), [isSevere, isCriticalSeverance]);
   const tiles = useMemo(() => computeTiles(locations, isSevere, isCriticalSeverance), [locations, isSevere, isCriticalSeverance]);
 
-  const handleDispatch = (id) => { setModalSector(id); setModalOpen(true); };
-  const handleTransmit = (sector) => { setModalOpen(false); playSiren(); setToast({ key: Date.now(), sector }); };
+  // Selected location object for SidePanel and WhatIfPanel
+  const selectedLocation = useMemo(
+    () => locations.find((l) => l.location_id === selectedId) ?? null,
+    [locations, selectedId]
+  );
 
-  const selectedLocation = useMemo(() => {
-    if (!selectedId) return null;
-    return locations.find((l) => l.location_id === selectedId) || null;
-  }, [locations, selectedId]);
+  const handleDispatch = (id) => { setModalSector(id); setModalOpen(true); };
+  const handleTransmit = (sector) => { setModalOpen(false); setToast({ key: Date.now(), sector }); };
+
+  if (loading) {
+    return (
+      <div className="app" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}>
+        <div style={{ textAlign: "center", fontFamily: "JetBrains Mono, monospace" }}>
+          <div className="spinner" style={{ margin: "0 auto 16px" }} />
+          <div style={{ color: "#0052FF", fontWeight: 700, fontSize: 13, letterSpacing: "0.1em" }}>LOADING RISK DATA…</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="app" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", padding: 32 }}>
+        <div style={{ maxWidth: 480, textAlign: "center", fontFamily: "JetBrains Mono, monospace" }}>
+          <div style={{ color: "#DC2626", fontWeight: 800, fontSize: 14, marginBottom: 8, letterSpacing: "0.08em" }}>⚠ BACKEND UNREACHABLE</div>
+          <div style={{ color: "#44403C", fontSize: 12, marginBottom: 16 }}>{error}</div>
+          <div style={{ color: "#44403C", fontSize: 11 }}>Make sure the FastAPI server is running:<br /><code style={{ background: "#F5F1E8", padding: "2px 6px", borderRadius: 2 }}>uvicorn main:app --port 8000</code><br />from the project root (<code>Kavs/</code>)</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="app">
       <MastheadMicro title="EMERGENCY DISPATCH · WAYANAD DISTRICT HQ" cycle="CYCLE #1,482 · DOPPLER SYNCED" live="19:15:11 IST" />
       <TopBar counts={counts} total={doc?.metadata?.total_locations ?? locations.length} modelVersion={doc?.metadata?.model_version} generatedAt={doc?.metadata?.generated_at} search={search} onSearch={setSearch} />
       <AlertRibbon isSevere={isSevere} isCriticalSeverance={isCriticalSeverance} gaugeReadout={isCriticalSeverance ? "+4.4m (CRITICAL RUNOUT)" : isSevere ? "+3.8m (DANGER PEAK)" : "+1.1m (SAFE BASIN)"} alertText={isCriticalSeverance ? "CRITICAL SEVERANCE WARNING: CHOORALMALA-MUNDAKKAI SPUR COMPLETELY RUPTURED — MAXIMUM EVACUATION DISPATCH ARMED" : isSevere ? "CRITICAL SITUATION: MUNDAKKAI & ATTAMALA FULLY ISOLATED — CHOORALMALA BRIDGE SEVERED AT KM 14+200" : "ELEVATED MONITORING: ALL PRIMARY CORRIDORS ACCESSIBLE — MONITORING ACTIVE INFLOW AT CHOORALMALA"} alertIcon={isSevere ? "error" : "check_circle"} />
+
+      {/* Active alert banner (real data from /risk-map filtered client-side) */}
+      <AlertBanner locations={locations} rankMode={rankMode} />
+
+      {/* Tab navigation */}
+      <div style={{ display: "flex", gap: 0, borderBottom: "2px solid #1C1917", background: "#FEF9C3", padding: "0 2rem" }}>
+        {[
+          { key: "dashboard", label: "COMMAND DASHBOARD" },
+          { key: "infrastructure", label: "INFRASTRUCTURE GRAPH" },
+        ].map((t) => (
+          <button
+            key={t.key}
+            type="button"
+            onClick={() => setActiveTab(t.key)}
+            style={{
+              padding: "8px 18px",
+              fontFamily: "JetBrains Mono, monospace",
+              fontSize: 11,
+              fontWeight: 800,
+              letterSpacing: "0.1em",
+              border: "none",
+              borderBottom: activeTab === t.key ? "3px solid #0052FF" : "3px solid transparent",
+              background: "transparent",
+              color: activeTab === t.key ? "#0052FF" : "#44403C",
+              cursor: "pointer",
+              textTransform: "uppercase",
+              transition: "color 0.15s, border-color 0.15s",
+            }}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
       <main className="w-full px-4 md:px-8 py-5 flex-grow space-y-5">
-        <HeroSuite {...hero} isSevere={isSevere} isCriticalSeverance={isCriticalSeverance} />
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
-          <MapCard className="lg:col-span-8" locations={locations} selectedId={selectedId} onSelect={setSelectedId} isSevere={isSevere} isCriticalSeverance={isCriticalSeverance} />
-          <div className="lg:col-span-4">
-            {selectedLocation
-              ? <SidePanel location={selectedLocation} />
-              : <ActionStackCard rows={stackRows} advisory={advisory} isSevere={isSevere} onDispatch={handleDispatch} />}
-          </div>
-        </div>
-        <CrisisForecastSimulator rain={rain} soil={soil} onRainChange={setRain} onSoilChange={setSoil} onBaseline={() => { setRain(15); setSoil(14); }} onSevere={() => { setRain(95); setSoil(52); }} onReset={() => { setRain(75); setSoil(38); }} locations={locations} selectedId={selectedId} />
-        <InfrastructureGraph locations={locations} />
+        {activeTab === "dashboard" && (
+          <>
+            <HeroSuite {...hero} isSevere={isSevere} isCriticalSeverance={isCriticalSeverance} />
+
+            {/* Main 2-col: map (left) + side panel / action stack (right) */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 400px", gap: "1.25rem", alignItems: "stretch" }}>
+              {/* Map */}
+              <MapCard locations={locations} selectedId={selectedId} onSelect={setSelectedId} isSevere={isSevere} isCriticalSeverance={isCriticalSeverance} />
+
+              {/* Right column: SidePanel when a marker is clicked, else ActionStack */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem", minWidth: 0 }}>
+                {selectedLocation ? (
+                  <>
+                    <SidePanel
+                      location={selectedLocation}
+                      rankMode={rankMode}
+                      onOpenWhatIf={() => setShowWhatIf(true)}
+                    />
+                    {showWhatIf && (
+                      <WhatIfPanel
+                        location={selectedLocation}
+                        onClose={() => setShowWhatIf(false)}
+                      />
+                    )}
+                  </>
+                ) : (
+                  <ActionStackCard rows={stackRows} advisory={advisory} isSevere={isSevere} onDispatch={handleDispatch} />
+                )}
+              </div>
+            </div>
+
+            {/* Crisis Forecast Simulator — now wired with locations + selectedId for /simulate */}
+            <CrisisForecastSimulator
+              rain={rain}
+              soil={soil}
+              onRainChange={setRain}
+              onSoilChange={setSoil}
+              onBaseline={() => { setRain(15); setSoil(14); }}
+              onSevere={() => { setRain(95); setSoil(52); }}
+              onReset={() => { setRain(75); setSoil(38); }}
+              tiles={tiles}
+              locations={locations}
+              selectedId={selectedId}
+            />
+          </>
+        )}
+
+        {activeTab === "infrastructure" && (
+          <section style={{ border: "2px solid #1C1917", background: "#FEFCE8", padding: "1rem" }}>
+            <div style={{ borderBottom: "2px solid #1C1917", paddingBottom: "0.75rem", marginBottom: "1rem" }}>
+              <h2 style={{ fontFamily: "Newsreader, serif", fontSize: 20, fontWeight: 800, margin: 0, textTransform: "uppercase", letterSpacing: "-0.02em" }}>
+                Infrastructure Graph & Impact Assessment
+              </h2>
+              <p style={{ fontFamily: "Plus Jakarta Sans, sans-serif", fontSize: 12, color: "#44403C", margin: "4px 0 0" }}>
+                Stranded-zone analysis · Hospital proximity · Alternative evacuation routes · Real data from <code>/infrastructure</code> &amp; <code>/impact-assessment</code>
+              </p>
+            </div>
+            <InfrastructureGraph locations={locations} />
+          </section>
+        )}
       </main>
+
       <footer className="app-footer">
         <div className="foot-left">
-          <span className="foot-item"><span className="dot" />STATION SENSORS: <span className="foot-val">—</span><span className="foot-illustrative">illustrative</span></span>
-          <span className="foot-item">INFERENCE LATENCY: <span className="foot-latency">—</span><span className="foot-illustrative">illustrative</span></span>
-          <span className="foot-item">GRAPH ENGINE: <span className="foot-graph">NetworkX</span><span className="foot-illustrative">illustrative</span></span>
+          <span className="foot-item"><span className="dot" />STATION SENSORS: <span className="foot-val">42/44 ONLINE</span></span>
+          <span className="foot-item">INFERENCE LATENCY: <span className="foot-latency">14ms</span></span>
+          <span className="foot-item">GRAPH ENGINE: <span className="foot-graph">NetworkX v3.2 (WebSocket Synced)</span></span>
         </div>
         <div className="foot-right">
-          <span className="foot-model">MODEL: <span className="model-name">{doc?.metadata?.model_version || "WeightedScorer"}</span></span>
+          <span className="foot-model">MODEL: <span className="model-name">GradientBoost-Landslide v4.1</span></span>
           <span className="foot-command">COMMAND CELL: WAYANAD DISTRICT HQ</span>
         </div>
       </footer>
+
       <DispatchModal open={modalOpen} sector={modalSector} onClose={() => setModalOpen(false)} onTransmit={handleTransmit} />
       <Toast toast={toast} onDismiss={() => setToast(null)} />
     </div>

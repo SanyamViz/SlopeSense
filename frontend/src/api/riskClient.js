@@ -13,24 +13,21 @@
 
 /**
  * Base URL of the risk API. Resolution order (first non-empty wins):
- *   1. Runtime override window.RISK_API_BASE (injected via index.html at
- *      build time, or set externally) -- retargets the backend without
- *      rebuilding the SPA.
+ *   1. VITE_RISK_API_BASE (standard Vite public env var, set in Vercel).
  *   2. Fallback http://localhost:8000 (local dev with the API on :8000).
- *
- *   Note: the VITE_ public prefix is intentionally NOT used. Public prefixes
- *   cause Vite to inline the value into the JS bundle at build time, which
- *   exposes it to the browser. Instead, the value is injected into the served
- *   index.html at build time (see vite.config.js transformIndexHtml hook).
  */
-const RUNTIME_BASE =
-  typeof window !== "undefined" && window.RISK_API_BASE
-    ? String(window.RISK_API_BASE).replace(/\/$/, "")
-    : null;
+const RUNTIME_BASE = import.meta.env.VITE_RISK_API_BASE;
+
+if (!RUNTIME_BASE && !import.meta.env.DEV) {
+  console.error(
+    "[riskClient] VITE_RISK_API_BASE is not set. " +
+    "Set it in Vercel environment variables to point to your backend URL."
+  );
+}
 
 export const RISK_API_BASE =
   RUNTIME_BASE ||
-  "http://localhost:8000";
+  (import.meta.env.DEV ? "http://localhost:8000" : "");
 
 /** Fetch the full risk document. Throws on non-2xx so callers can show errors. */
 export async function fetchRiskMap() {
