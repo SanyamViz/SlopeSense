@@ -12,6 +12,7 @@ import CrisisForecastSimulator from "./components/CrisisForecastSimulator";
 import DispatchModal from "./components/DispatchModal";
 import Toast from "./components/Toast";
 import { buildStackRows, computeHero, computeAdvisory, computeTiles } from "./engine";
+import { playSiren } from "./hooks/useSiren";
 
 export default function App() {
   const [doc, setDoc] = useState(null);
@@ -52,7 +53,7 @@ export default function App() {
   const tiles = useMemo(() => computeTiles(locations, isSevere, isCriticalSeverance), [locations, isSevere, isCriticalSeverance]);
 
   const handleDispatch = (id) => { setModalSector(id); setModalOpen(true); };
-  const handleTransmit = (sector) => { setModalOpen(false); setToast({ key: Date.now(), sector }); };
+  const handleTransmit = (sector) => { setModalOpen(false); playSiren(); setToast({ key: Date.now(), sector }); };
 
   return (
     <div className="app">

@@ -1,4 +1,5 @@
 import { levelColor } from "../constants/risk";
+import { playSiren } from "../hooks/useSiren";
 
 const SECTOR_MESSAGES = {
   Mundakkai: {
@@ -61,7 +62,7 @@ export default function DispatchModal({ open, sector, onClose, onTransmit }) {
         </div>
         <div className="modal-foot">
           <button className="btn btn-cancel" onClick={onClose} type="button">[ CANCEL / DISARM ]</button>
-          <button className="btn btn-transmit" onClick={() => onTransmit(sector)} type="button">
+            <button className="btn btn-transmit" onClick={() => { playSiren(); onTransmit(sector); }} type="button">
             <span className="material-symbols-outlined text-[15px]">send</span>[ TRANSMIT LIVE ALERT ]
           </button>
         </div>
