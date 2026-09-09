@@ -10,6 +10,20 @@ from datetime import datetime, timezone
 
 logger = logging.getLogger(__name__)
 
+# Districts whose primary vernacular is Malayalam (Wayanad villages). Every
+# other Kerala district defaults to Hindi for the alert vernacular.
+_MALAYALAM_DISTRICTS = {"wayanad"}
+
+
+def _district_language(district):
+    """Resolve the vernacular alert language for a district.
+
+    Wayanad -> Malayalam ("ml"); everything else -> Hindi ("hi").
+    """
+    if district and str(district).strip().lower() in _MALAYALAM_DISTRICTS:
+        return "ml"
+    return "hi"
+
 
 def build_metadata(cfg):
     return {
@@ -24,12 +38,20 @@ def build_metadata(cfg):
     }
 
 
-def build_alert(risk_score, risk_level, factors, location_name="this location"):
+def build_alert(risk_score, risk_level, factors, location_name="this location",
+                district=None, language=None):
     """Generate alert text from score + dominant contributing factor.
 
     ASSUMPTION: a hand-written rule set over the top factor is a reasonable
     hackathon substitute for a domain-alert taxonomy.
+
+    The vernacular ``language`` is resolved per district so Wayanad villages
+    receive Malayalam (``ml``) while every other Kerala district defaults to
+    Hindi (``hi``). Pass ``language`` explicitly to override the default.
     """
+    if language is None:
+        language = _district_language(district)
+
     dominant = max(factors, key=lambda f: f["contribution"])
     f = dominant["factor"]
 
@@ -53,17 +75,34 @@ def build_alert(risk_score, risk_level, factors, location_name="this location"):
 
     # Delegate to the template-based alert generator for richer structured output.
     from alert_generator import generate_alert
-    generated = generate_alert(risk_score, risk_level, factors, location_name)
+    generated = generate_alert(
+        risk_score, risk_level, factors, location_name, language=language
+    )
+
+    headline_hi = generated["headline_hi"]
+    explanation_hi = generated["explanation_hi"]
+    action_hi = generated["recommended_action_hi"]
+    if language == "ml":
+        headline_local = generated["headline_ml"]
+        explanation_local = generated["explanation_ml"]
+        action_local = generated["recommended_action_ml"]
+    else:
+        headline_local = headline_hi
+        explanation_local = explanation_hi
+        action_local = action_hi
 
     return {
         "message_en": en,
-        "message_local": f"{generated['headline_hi']}\n\n{generated['explanation_hi']}",
+        "message_local": f"{headline_local}\n\n{explanation_local}",
         "recommended_action": action,
         "headline": generated["headline"],
         "headline_hi": generated["headline_hi"],
+        "headline_ml": generated["headline_ml"],
         "explanation": generated["explanation"],
         "explanation_hi": generated["explanation_hi"],
+        "explanation_ml": generated["explanation_ml"],
         "recommended_action_hi": generated["recommended_action_hi"],
+        "recommended_action_ml": generated["recommended_action_ml"],
         "top_factor": generated["top_factor"],
         "language": generated["language"],
     }

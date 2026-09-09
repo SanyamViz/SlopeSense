@@ -16,35 +16,39 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
-# Human-readable factor names (English + Hindi)
+# Human-readable factor names (English + Hindi + Malayalam)
 # ---------------------------------------------------------------------------
 _FACTOR_LABELS = {
     "slope_angle": {
         "en": "steep slope",
         "hi": "ढलान",
+        "ml": "ഢലാന ചരിവ്",
     },
     "rainfall_intensity": {
         "en": "heavy rainfall",
         "hi": "भारी बारिश",
+        "ml": "ശക്തമായ മഴ",
     },
     "soil_saturation": {
         "en": "waterlogged soil",
         "hi": "मिट्टी में पानी",
+        "ml": "മണ്ണിലെ ജലാംശം",
     },
     "historical_proximity": {
         "en": "nearby past landslide activity",
         "hi": "पिछले भूस्खलन की गतिविधि",
+        "ml": "പില്ലി ഭൂസ്ഖലന സമീപത",
     },
 }
 
 # ---------------------------------------------------------------------------
-# Risk-level labels (English + Hindi)
+# Risk-level labels (English + Hindi + Malayalam)
 # ---------------------------------------------------------------------------
 _LEVEL_LABELS = {
-    "severe": {"en": "Severe", "hi": "गंभीर"},
-    "high": {"en": "High", "hi": "उच्च"},
-    "moderate": {"en": "Moderate", "hi": "मध्यम"},
-    "low": {"en": "Low", "hi": "कम"},
+    "severe": {"en": "Severe", "hi": "गंभीर", "ml": "തീവ്ര"},
+    "high": {"en": "High", "hi": "उच्च", "ml": "ഉയർന്ന"},
+    "moderate": {"en": "Moderate", "hi": "मध्यम", "ml": "മധ്യമ"},
+    "low": {"en": "Low", "hi": "कम", "ml": "കമ"},
 }
 
 # ---------------------------------------------------------------------------
@@ -62,6 +66,13 @@ _HEADLINE_TEMPLATES_HI = {
     "high": "{village} में उच्च भूस्खलन का खतरा",
     "moderate": "{village} में मध्यम भूस्खलन का खतरा",
     "low": "{village} में कम भूस्खलन का खतरा",
+}
+
+_HEADLINE_TEMPLATES_ML = {
+    "severe": "{village} എന്ന പ്രദേശത്ത് തീവ്ര ഭൂസ്ഖലന അപകടം",
+    "high": "{village} എന്ന പ്രദേശത്ത് ഉയർന്ന ഭൂസ്ഖലന അപകടം",
+    "moderate": "{village} എന്ന പ്രദേശത്ത് മധ്യമ ഭൂസ്ഖലന അപകടം",
+    "low": "{village} എന്ന പ്രദേശത്ത് കറാഞ്ഞ ഭൂസ്ഖലന അപകടം",
 }
 
 # ---------------------------------------------------------------------------
@@ -127,9 +138,39 @@ _EXPLANATION_TEMPLATES_HI = {
         "संतृप्ति पर है, जो {saturation_danger_pct}% के खतरे की सीमा से अधिक है, जिससे "
         "ढलान पर अतिरिक्त भार पड़ता है और मिट्टी टिकने की क्षमता कम हो जाती है।"
     ),
-    "historical_proximity": (
+"historical_proximity": (
         "यह स्थान पिछले भूस्खलन से {historical_proximity} km की दूरी पर है, "
         "{proximity_note_hi}, और पुरानी गति से ढलान की मजबूती कम हो जाती है।"
+    ),
+}
+
+# ---------------------------------------------------------------------------
+# Explanation templates (Malayalam) -- parallel translation of the EN strings.
+# ---------------------------------------------------------------------------
+_EXPLANATION_TEMPLATES_ML = {
+    "slope_angle": (
+        "ഇവിടെ ഢലാനത ഖതരാക്കാനുള്ള പ്രധാന കാരണമാണ്: ചരിവിന്റെ കോണ് "
+        "{slope_angle} ഡിഗ്രിയായി അളിചെട്ടിട്ടുണ്ട്, {danger_deg} ഡിഗ്രിയുടെ "
+        "ഖതര കിന്നിയിൽ നിന്ന് കൂടുതലാണ്, അതിനാൽ ഗുരുത്വാകർഷണം കല്ലുകളും "
+        "മണ്ണും താഴേക്ക് വലിക്കും."
+    ),
+    "rainfall_intensity": (
+        "ഇവിടെ മഴയുടെ ഖതരമാണ് പ്രധാന കാരണം: 24 മണിക്കൂറിലെ മഴ "
+        "{rainfall_intensity} mm എത്തിയിട്ടുണ്ട്, 7 ദിവസത്തെ മൊത്തം "
+        "{rainfall_7d} mm, {rainfall_7d_danger_mm} mm എന്ന സുരക്ഷിത ബാധിത മിതിയിൽ "
+        "നിന്ന് വളരെ കൂടുതലാണ്, ഇത് ഢലാനങ്ങളെ ഭാരം നിറഞ്ഞു പുറപ്പെടുവാൻ "
+        "തയാറാക്കിയിട്ടുണ്ട്."
+    ),
+    "soil_saturation": (
+        "ഇവിടെ മണ്ണിലെ ജലാംശത്തിന്റെ ഖതരമാണ് പ്രധാന കാരണം: ഭൂമി "
+        "{soil_saturation_pct}% സംതൃപ്തിയിലാണ്, {saturation_danger_pct}% എന്ന ഖതര "
+        "മിതിയിൽ നിന്ന് കൂടുതലാണ്, ഇത് ഢലാനത്തിന് അതിരിക്ത ഭാരം കൂട്ടി "
+        "മണ്ണിന്റെ ഒന്നിക്കാനുള്ള ക്ഷമത കുറയ്ക്കും."
+    ),
+    "historical_proximity": (
+        "ഈ സ്ഥാനം പില്ലി ഭൂസ്ഖലനത്തിൽ നിന്ന് {historical_proximity} km "
+        "ദൂരത്തിലാണ്, {proximity_note_ml}, പുരാതന ചലനം ഭൂകമ്പത്തിന് ശേഷവും "
+        "ഢലാനത്തിന്റെ ശക്തി കുറഞ്ഞിട്ടുണ്ട്."
     ),
 }
 
@@ -158,6 +199,13 @@ _ACTION_TEMPLATES_HI = {
     "high": "ढलान और नालियों से बचें; दरार या असामान्य पानी की धार के लिए निगरानी करें; 24 घंटे के भीतर जनता को सलाह दें।",
     "moderate": "निगरानी जारी रखें; सतह के ड्रेनेज चैनल साफ करें; मार्गों और कटे हुए ढलानों पर सावधानी बताएं।",
     "low": "नियमित निगरानी; तुरंत किसी प्रतिबंध की आवश्यकता नहीं है।",
+}
+
+_ACTION_TEMPLATES_ML = {
+    "severe": "ഢലാനമുള്ള പ്രദേശങ്ങളിലേക്കുള്ള പ്രവേശനം നിരോധിക്കുക; മുന്നോട്ട് എതിർത്താൽ സൈറൻ സജ്ജീകരിക്കുക; അപകടത്തിലുള്ള കുടുംബങ്ങളെ മാറ്റിനിർത്താൻ തയാറാക്കുക.",
+    "high": "ഢലാനങ്ങളും കുളങ്ങളും ഒഴിവാക്കുക; ക്രാക്കുകളോ സാധാരണമില്ലാത്ത ജലപ്രവാഹമോ പര്യവേക്ഷണം ചെയ്യുക; 24 മണിക്കൂറിനുള്ളിൽ പൊതുജനങ്ങളെ അറിയിക്കുക.",
+    "moderate": "പര്യവേക്ഷണം തുടരുക; പ്രാഥമിക ജലനിരമ്പാൻ ചാനലുകൾ ക്ലിയർ ചെയ്യുക; വന്യപാതകളും മുറിച്ചുകൊണ്ടുള്ള ഢലാനങ്ങളും സംഭവിച്ചുകൊണ്ടുള്ള സ്ഥലങ്ങളിൽ ജാഗ്രത പ്രാപ്പിക്കുക.",
+    "low": "നിയമിതമായ പര്യവേക്ഷണം; ഉടനെ എത്രയും നിരോധങ്ങളും ആവശ്യമില്ല.",
 }
 
 
@@ -191,12 +239,15 @@ def _build_explanation_context(factors, top_factor):
     if proximity is not None and nearby is not None and proximity <= nearby:
         proximity_note_en = f"within the {nearby} km 'nearby' radius"
         proximity_note_hi = f"{nearby} km की 'नज़दीक' सीमा के भीतर"
+        proximity_note_ml = f"{nearby} km എന്ന സമീപത സീമയ്ക്ക് ഉള്ളിൽ"
     elif proximity is not None and nearby is not None:
         proximity_note_en = f"outside the {nearby} km 'nearby' radius"
         proximity_note_hi = f"{nearby} km की 'नज़दीक' सीमा से बाहर"
+        proximity_note_ml = f"{nearby} km എന്ന സമീപത സീമയ്ക്ക് പുറത്ത്"
     else:
         proximity_note_en = "at an unknown distance from past landslide activity"
         proximity_note_hi = "पिछले भूस्खलन से अज्ञात दूरी पर"
+        proximity_note_ml = "പില്ലി ഭൂസ്ഖലനത്തിൽ നിന്നുള്ള ദൂരം അറിഞ്ഞില്ല"
 
     ctx = {
         "slope_angle": dominant.get("raw_value"),
@@ -213,6 +264,7 @@ def _build_explanation_context(factors, top_factor):
         "nearby_radius_km": nearby,
         "proximity_note_en": proximity_note_en,
         "proximity_note_hi": proximity_note_hi,
+        "proximity_note_ml": proximity_note_ml,
     }
     return ctx
 
@@ -243,30 +295,40 @@ def generate_alert(
     risk_level: str,
     factors: list[dict[str, Any]],
     location_name: str = "this location",
+    language: str = "hi",
 ) -> dict[str, str]:
-    """Return a structured alert dict with English and Hindi text.
+    """Return a structured alert dict with English + vernacular text.
 
     Args:
         risk_score: Normalised 0-100 risk score.
         risk_level: One of ``low``, ``moderate``, ``high``, ``severe``.
         factors: Per-factor contribution dicts from the scoring layer.
         location_name: Village / settlement name for headline placeholders.
+        language: Vernacular code to render -- ``"hi"`` (Hindi, default) or
+            ``"ml"`` (Malayalam, used for Wayanad villages). Unknown codes
+            fall back to ``"hi"``.
 
     Returns:
-        Dict with keys ``headline``, ``headline_hi``, ``explanation``,
-        ``explanation_hi``, ``recommended_action``, ``recommended_action_hi``,
-        ``top_factor``, ``language``.
+        Dict with keys ``headline``, ``headline_hi``, ``headline_ml``,
+        ``explanation``, ``explanation_hi``, ``explanation_ml``,
+        ``recommended_action``, ``recommended_action_hi``,
+        ``recommended_action_ml``, ``top_factor``, ``language``.
     """
     risk_level = risk_level.lower()
     if risk_level not in _HEADLINE_TEMPLATES:
         logger.warning("Unknown risk_level '%s' -- falling back to 'moderate'", risk_level)
         risk_level = "moderate"
 
+    if language not in ("hi", "ml"):
+        logger.warning("Unknown language '%s' -- falling back to 'hi'", language)
+        language = "hi"
+
     dominant = max(factors, key=lambda f: f["contribution"])
     top_factor = dominant["factor"]
 
     headline = _HEADLINE_TEMPLATES[risk_level].format(village=location_name)
     headline_hi = _HEADLINE_TEMPLATES_HI[risk_level].format(village=location_name)
+    headline_ml = _HEADLINE_TEMPLATES_ML[risk_level].format(village=location_name)
 
     # Explanation is chosen by top_factor and interpolated from the SAME factor
     # object that was selected as dominant -- no resampling, no re-fetch.
@@ -283,6 +345,12 @@ def generate_alert(
         ),
         ctx,
     )
+    explanation_ml = _format_explanation(
+        _EXPLANATION_TEMPLATES_ML.get(
+            top_factor, "ഉന്നത ഭൂസ്ഖലന അപകടത്തിന് ഒന്നിക്കുന്ന ഒരു പല ഘടകങ്ങളും ഉണ്ട്."
+        ),
+        ctx,
+    )
 
     action = _ACTION_TEMPLATES.get(
         risk_level, _ACTION_TEMPLATES["moderate"]
@@ -290,18 +358,24 @@ def generate_alert(
     action_hi = _ACTION_TEMPLATES_HI.get(
         risk_level, _ACTION_TEMPLATES_HI["moderate"]
     )
+    action_ml = _ACTION_TEMPLATES_ML.get(
+        risk_level, _ACTION_TEMPLATES_ML["moderate"]
+    )
 
     alert = {
         "headline": headline,
         "headline_hi": headline_hi,
+        "headline_ml": headline_ml,
         "explanation": explanation,
         "explanation_hi": explanation_hi,
+        "explanation_ml": explanation_ml,
         "recommended_action": action,
         "recommended_action_hi": action_hi,
+        "recommended_action_ml": action_ml,
         "top_factor": top_factor,
-        "language": "en,hi",
+        "language": language,
     }
 
-    logger.debug("Generated alert for %s (level=%s, factor=%s): %s",
-                 location_name, risk_level, top_factor, headline)
+    logger.debug("Generated alert for %s (level=%s, factor=%s, lang=%s): %s",
+                 location_name, risk_level, top_factor, language, headline)
     return alert

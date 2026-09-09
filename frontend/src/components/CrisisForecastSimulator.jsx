@@ -43,7 +43,7 @@ export default function CrisisForecastSimulator({
     let cancelled = false;
     const id = setTimeout(() => {
       if (cancelled) return;
-      runSim(selectedLocation, { rainfall_24h: rain, soil_saturation: soil });
+      runSim(selectedLocation, { rainfall_24h: rain, soil_saturation: soil / 100 });
     }, DEBOUNCE_MS);
     return () => { cancelled = true; clearTimeout(id); };
   }, [selectedLocation, rain, soil, runSim]);

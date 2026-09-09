@@ -17,18 +17,16 @@ import logging
 import os
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional
 from xml.sax.saxutils import escape as _xml_escape
 
 from fastapi import FastAPI, HTTPException, Query
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 
 from config import CONFIG
-from scoring import score_single_location
 from graph_analysis import compute_impact_assessment
+from scoring import score_single_location
 
 # Twilio REST client for SMS/WhatsApp alert dispatch. Credentials come from
 # the environment (TWILIO_ACCOUNT_SID / TWILIO_AUTH_TOKEN) -- never hardcode.
@@ -251,12 +249,12 @@ def impact_assessment(radius_km: float = Query(default=20.0, ge=1.0, le=200.0, d
 
 @app.get("/alerts/active", tags=["risk"])
 def active_alerts(
-    min_level: Optional[str] = Query(
+    min_level: str | None = Query(
         default="high",
         description="Minimum risk level to include (low/moderate/high/severe). "
                     "Ignored if min_score is also provided.",
     ),
-    min_score: Optional[float] = Query(
+    min_score: float | None = Query(
         default=None, ge=0, le=100, description="Explicit minimum risk_score (overrides min_level)."
     ),
 ):

@@ -29,95 +29,154 @@ function makeRow(loc, rank, opts) {
   };
 }
 
-export function buildStackRows(locations, isSevere, isCriticalSeverance) {
+export function buildStackRows(locations, isSevere, isCriticalSeverance, impactMap = {}) {
   const byId = {};
   for (const l of locations) byId[l.location_id] = l;
   const mundakkai = byId.loc_014 || byId["WAYANAD_2024_VAL"];
   const chooralmala = byId.loc_024;
-  const attamala = null;
-  const punjirimattom = null;
+
+  // Resolve the stranded / route status for each zone from the real
+  // /impact-assessment data (same source InfrastructureGraph.jsx uses).
+  const strandedOf = (id) => {
+    const z = impactMap[id];
+    if (!z) return null;
+    return {
+      stranded: z.alternative_routes
+        ? z.alternative_routes.every((r) => r.unreachable)
+        : false,
+      alt: z.alternative_routes
+        ? z.alternative_routes.find((r) => !r.unreachable)
+        : null,
+      nearbyHospitals: z.nearby_hospital_count,
+      bedsFree: z.total_available_capacity_nearby,
+    };
+  };
+
+  const roadFor = (loc) => {
+    const s = strandedOf(loc.location_id);
+    if (!s) return { status: "—", color: "#44403C" };
+    if (s.stranded) return { status: "STRANDED — no route to shelter", color: "#DC2626" };
+    if (s.alt) return { status: `Alt route: ${s.alt.safe_node_name} (${s.alt.hops} hops)`, color: "#15803D" };
+    return { status: "Routes nominal", color: "#15803D" };
+  };
+
+  const trustOf = (loc) => {
+    const t = loc.trust_score || {};
+    return {
+      accuracy: t.accuracy_pct ?? 0,
+      correct: t.correct_count ?? 0,
+      total: t.total_count ?? 0,
+    };
+  };
+
+  const riskOf = (loc) => ({
+    label: `Risk ${loc.risk_score.toFixed(1)}`,
+    color: levelColor(loc.risk_level),
+    bg: levelColor(loc.risk_level) + "1f",
+  });
+
+  const statusOf = (loc) => {
+    if (loc.risk_level === "severe") return { status: "SEVERE", bg: "#FEE2E2", color: "#DC2626" };
+    if (loc.risk_level === "high") return { status: "HIGH", bg: "#FEF3C7", color: "#B45309" };
+    if (loc.risk_level === "moderate") return { status: "ELEVATED", bg: "#FEF3C7", color: "#B45309" };
+    return { status: "OPEN", bg: "#ECFDF5", color: "#15803D" };
+  };
 
   if (isSevere) {
-    return [
-      makeRow(mundakkai, 1, {
-        status: "CUT OFF", statusBg: "#FEF2F2", statusColor: "#DC2626",
-        riskBg: "#FEF2F2", riskColor: "#DC2626", riskLabel: "Risk 94.2",
-        trustText: "88% (17/20 verified)",
-        trustBadge: "AIR RECON LAUNCHED", trustBadgeBg: "#ECFDF5", trustBadgeColor: "#059669", trustColor: "#15803D",
-        roadStatus: "BRIDGE SEVERED AT KM 14", roadColor: "#DC2626",
-        urgencyTag: isCriticalSeverance ? "CRITICAL ISOLATION SEVERED" : "CUT OFF HIGHEST PRIORITY",
-        urgencyTagStyle: isCriticalSeverance ? { background: "#DC2626", color: "#fff" } : { background: "#0052FF", color: "#fff" },
-      }),
-      makeRow(chooralmala, 2, {
-        status: "SEVERE", statusBg: "#FEE2E2", statusColor: "#DC2626",
-        riskBg: "#FEE2E2", riskColor: "#DC2626", riskLabel: "Risk 92",
-        trustText: "82% (14/17 accurate)",
-        trustBadge: "GROUND CORPS ON-SITE", trustBadgeBg: "#ECFDF5", trustBadgeColor: "#059669", trustColor: "#15803D",
-        roadStatus: "Shelter: Higher Secondary School", roadColor: "#1C1917",
-      }),
-    ].filter(Boolean);
+    return [mundakkai, chooralmala].filter(Boolean).map((loc, i) => {
+      const t = trustOf(loc);
+      const r = riskOf(loc);
+      const st = statusOf(loc);
+      const road = roadFor(loc);
+      const s = strandedOf(loc.location_id);
+      const badge = s && s.stranded ? "STRANDED" : (loc.risk_level === "severe" ? "CUT OFF" : "ACTIVE");
+      return makeRow(loc, i + 1, {
+        status: st.status, statusBg: st.bg, statusColor: st.color,
+        riskBg: r.bg, riskColor: r.color, riskLabel: r.label,
+        trustText: `${t.accuracy.toFixed(0)}% (${t.correct}/${t.total})`,
+        trustBadge: badge,
+        trustBadgeBg: s && s.stranded ? "#FEF2F2" : "#ECFDF5",
+        trustBadgeColor: s && s.stranded ? "#DC2626" : "#059669",
+        trustColor: "#15803D",
+        roadStatus: road.status, roadColor: road.color,
+        urgencyTag: s && s.stranded ? "ISOLATED" : (loc.risk_level === "severe" ? "CUT OFF" : "ELEVATED"),
+        urgencyTagStyle: { background: s && s.stranded ? "#DC2626" : (loc.risk_level === "severe" ? "#DC2626" : "#0052FF"), color: "#fff" },
+      });
+    });
   }
-  return [
-    makeRow(punjirimattom, 1, {
-      status: "HIGH", statusBg: "#FEF3C7", statusColor: "#B45309",
-      riskBg: "#FEF3C7", riskColor: "#B45309", riskLabel: "Risk 88",
-      trustText: "Corridor: TRANSIT PASSABLE",
-      trustBadge: "ALL SECTORS MONITORED", trustBadgeBg: "#ECFDF5", trustBadgeColor: "#059669", trustColor: "#15803D",
-      roadStatus: "BRIDGE CLEAR · 15 KM/H", roadColor: "#15803D",
-    }),
-    makeRow(chooralmala, 2, {
-      status: "ELEVATED", statusBg: "#FEF3C7", statusColor: "#B45309",
-      riskBg: "#FEF3C7", riskColor: "#B45309", riskLabel: "Risk 72",
-      trustText: "84%",
-      trustBadge: "RIVERBED INFLOW STABLE", trustBadgeBg: "#ECFDF5", trustBadgeColor: "#059669", trustColor: "#15803D",
-      roadStatus: "Bridge Passable", roadColor: "#15803D",
-    }),
-    makeRow(mundakkai, 3, {
-      status: "OPEN", statusBg: "#ECFDF5", statusColor: "#15803D",
-      riskBg: "#ECFDF5", riskColor: "#15803D", riskLabel: "Risk 42",
-      trustText: "Corridor Status: SH 59 Connected",
-      trustBadge: "NO ROAD CUT-OFF", trustBadgeBg: "#ECFDF5", trustBadgeColor: "#059669", trustColor: "#15803D",
-      roadStatus: "Road Passable", roadColor: "#15803D",
-    }),
-  ].filter(Boolean);
+
+  // Non-severe view: list the top real locations by priority score, so the
+  // stack reflects the actual dataset instead of hand-picked Wayanad sectors.
+  const ranked = [...locations]
+    .filter((l) => l.risk_level === "high" || l.risk_level === "moderate" || l.risk_level === "low")
+    .sort((a, b) => (b.priority_score ?? 0) - (a.priority_score ?? 0))
+    .slice(0, 3);
+
+  return ranked.map((loc, i) => {
+    const t = trustOf(loc);
+    const r = riskOf(loc);
+    const st = statusOf(loc);
+    const road = roadFor(loc);
+    const s = strandedOf(loc.location_id);
+    return makeRow(loc, i + 1, {
+      status: st.status, statusBg: st.bg, statusColor: st.color,
+      riskBg: r.bg, riskColor: r.color, riskLabel: r.label,
+      trustText: `${t.accuracy.toFixed(0)}% (${t.correct}/${t.total})`,
+      trustBadge: s && s.stranded ? "STRANDED" : "MONITORED",
+      trustBadgeBg: s && s.stranded ? "#FEF2F2" : "#ECFDF5",
+      trustBadgeColor: s && s.stranded ? "#DC2626" : "#059669",
+      trustColor: "#15803D",
+      roadStatus: road.status, roadColor: road.color,
+      urgencyTag: s && s.stranded ? "ISOLATED" : "MONITORED",
+      urgencyTagStyle: { background: s && s.stranded ? "#DC2626" : "#0052FF", color: "#fff" },
+    });
+  });
 }
 
-export function computeHero(locations, isSevere, isCriticalSeverance) {
+export function computeHero(locations, isSevere, isCriticalSeverance, impactMap = {}) {
   const byId = {};
   for (const l of locations) byId[l.location_id] = l;
-  const mundakkai = byId.loc_014 || byId["WAYANAD_2024_VAL"];
-  const chooralmala = byId.loc_024;
-  const punjirimattom = byId.loc_052 || chooralmala;
 
   const highSevere = locations.filter((l) => l.risk_level === "high" || l.risk_level === "severe");
-  const sorted = [...highSevere].sort((a, b) => b.risk_score - a.risk_score);
-  const dangerCount = isCriticalSeverance ? Math.min(sorted.length + 1, 10) : sorted.length;
-  const dangerList = isCriticalSeverance
-    ? "Chooralmala, Mundakkai, Punjirimattom, Attamala, Vellarimala"
-    : "Chooralmala, Mundakkai, Punjirimattom, Attamala";
-  const stableCount = isCriticalSeverance ? "5 sectors stable" : "6 sectors stable";
-  const highestSector = "Punjirimattom (96/100)";
+  const sorted = [...highSevere].sort((a, b) => (b.priority_score ?? 0) - (a.priority_score ?? 0));
+  const dangerCount = sorted.length;
+  const dangerList = sorted.slice(0, 5).map((l) => l.name).join(", ") || "—";
+  const highestSector = sorted.length
+    ? `${sorted[0].name} (${sorted[0].risk_score.toFixed(0)}/100)`
+    : "—";
+  const stableCount = `${locations.length - dangerCount} sectors stable`;
 
-  const cutoffPop = isCriticalSeverance ? "3,920" : "2,960";
-  const cutoffDesc = isCriticalSeverance
-    ? "Mundakkai (1,840) + Attamala (1,120) + Upper Vellarimala (960)"
-    : "Mundakkai (1,840) + Attamala (1,120)";
-  const isolationTag = isCriticalSeverance ? "AIR/FOOT ONLY" : "AIR/FOOT ONLY";
-  const isolatedWards = isCriticalSeverance ? "3 WARDS ISOLATED" : "2 WARDS ISOLATED";
+  // Isolated population: sum the population of high/severe zones (real data).
+  const cutoffPop = String(
+    highSevere.reduce((sum, l) => sum + (l.vulnerability?.population || 0), 0).toLocaleString()
+  );
+  const cutoffDesc = highSevere.length
+    ? highSevere.slice(0, 3).map((l) => `${l.name} (${(l.vulnerability?.population || 0).toLocaleString()})`).join(" + ")
+    : "—";
+  const isolationTag = "AIR/FOOT ONLY";
+  const isolatedWards = `${highSevere.length} WARDS AT RISK`;
 
-  const priorityTitle = isSevere ? "MUNDAKKAI" : "PUNJIRIMATTOM";
-  const prioritySubtitle = isSevere
-    ? `Population 1,840 · Upper slope catchment · ${isCriticalSeverance ? "Catastrophic debris blockage" : "Completely cut off"}`
-    : "Population 960 · Upstream slope origin · Continuous saturation scan";
-  const priorityRoadStatus = isSevere ? "NO ROAD ACCESS" : "ALL ROADS OPEN";
-  const priorityRoadIcon = isSevere ? "block" : "check_circle";
-  const priorityRank = isCriticalSeverance ? "PRIORITY RANK 98.4" : isSevere ? "PRIORITY RANK 94.2" : "PRIORITY RANK 62.0";
-  const priorityBadge = isCriticalSeverance ? "SEVERED & FLOOD SURGE" : isSevere ? "BRIDGE SEVERED" : "TRANSIT PASSABLE";
+  // Priority target: the top location by priority score (real data).
+  const priorityLoc = sorted.length ? sorted[0] : (locations.length ? locations[0] : null);
+  const priorityTitle = priorityLoc ? priorityLoc.name : "—";
+  const prioritySubtitle = priorityLoc
+    ? `Population ${(priorityLoc.vulnerability?.population || 0).toLocaleString()} · ${priorityLoc.district} · ${priorityLoc.risk_level} risk`
+    : "—";
+  const priorityRoadStatus = priorityLoc && (impactMap[priorityLoc.location_id]?.alternative_routes?.every((r) => r.unreachable))
+    ? "NO ROAD ACCESS"
+    : (priorityLoc ? "EVACUATION ROUTES OPEN" : "—");
+  const priorityRoadIcon = priorityRoadStatus === "NO ROAD ACCESS" ? "block" : "check_circle";
+  const priorityRank = priorityLoc
+    ? `PRIORITY RANK ${(priorityLoc.priority_score ?? 0).toFixed(1)}`
+    : "PRIORITY RANK —";
+  const priorityBadge = priorityLoc
+    ? (priorityLoc.risk_level === "severe" ? "SEVERED & FLOOD SURGE" : priorityLoc.risk_level === "high" ? "HIGH RISK" : "MONITORED")
+    : "—";
 
   return {
     priorityTarget: "PRIORITY #1 EVACUATION TARGET",
     priorityBadge, priorityTitle, prioritySubtitle, priorityRoadStatus, priorityRoadIcon, priorityRank,
-    dangerCount, dangerRatio: `${dangerCount} / 10 WARDS`, dangerList, highestSector, stableCount,
+    dangerCount, dangerRatio: `${dangerCount} / ${locations.length} ZONES`, dangerList, highestSector, stableCount,
     cutoffPop, cutoffDesc, isolationTag, isolatedWards, reconStatus: "Helipad LZ reconnaissance active",
   };
 }
@@ -149,11 +208,12 @@ export function computeAdvisory(isSevere, isCriticalSeverance) {
 
 export function computeTiles(locations, isSevere, isCriticalSeverance) {
   const highSevere = locations.filter((l) => l.risk_level === "high" || l.risk_level === "severe");
-  const count = isCriticalSeverance ? Math.min(highSevere.length + 1, 10) : highSevere.length;
-  const cutoff = isCriticalSeverance ? 3 : 2;
+  const count = highSevere.length;
+  const priorityLoc = [...highSevere]
+    .sort((a, b) => (b.priority_score ?? 0) - (a.priority_score ?? 0))[0];
   return [
     { key: "danger", value: String(count), color: "#DC2626", bg: "#FEF2F2", label: "High/Severe Zones", labelColor: "#991B1B" },
-    { key: "cutoff", value: String(cutoff), color: "#0284C7", bg: "#E0F2FE", label: "Cut-Off Wards", labelColor: "#0369A1" },
-    { key: "priority", value: "Mundakkai", color: "#0052FF", bg: "#FEF9C3", label: "Priority #1 Target", labelColor: "#003EC7" },
+    { key: "cutoff", value: String(count), color: "#0284C7", bg: "#E0F2FE", label: "Zones At Risk", labelColor: "#0369A1" },
+    { key: "priority", value: priorityLoc ? priorityLoc.name : "—", color: "#0052FF", bg: "#FEF9C3", label: "Priority #1 Target", labelColor: "#003EC7" },
   ];
 }

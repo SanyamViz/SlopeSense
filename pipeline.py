@@ -67,14 +67,16 @@ def _row_to_location(row, scorer, cfg, alert_history):
             "rainfall_data_timestamp": cfg["data_freshness"]["rainfall_data_timestamp"],
             "soil_data_source": cfg["data_freshness"]["soil_data_source"],
         },
-        "alert": build_alert_block(risk_score, risk_level, factors, row.get("name", "this location")),
+        "alert": build_alert_block(risk_score, risk_level, factors, row.get("name", "this location"),
+                                  district=row.get("district")),
     }
     return loc
 
 
-def build_alert_block(risk_score, risk_level, factors, location_name="this location"):
+def build_alert_block(risk_score, risk_level, factors, location_name="this location",
+                      district=None):
     from export import build_alert
-    return build_alert(risk_score, risk_level, factors, location_name)
+    return build_alert(risk_score, risk_level, factors, location_name, district=district)
 
 
 def main(scorer=None):
@@ -194,6 +196,7 @@ def main(scorer=None):
         "rainfall_7d": 573.1,
         "soil_saturation": 1.0,
         "proximity_to_event_km": 0.0,   # event occurred ON this location
+        "historical_events_5km": 1,      # the 2024 event itself sits within 5km
         "population": 4200,
         "num_hospitals": 0,
         "num_schools": 2,
@@ -218,7 +221,8 @@ def main(scorer=None):
     }
     wayanad_validation["priority_score"] = round(float(val_priority), 2)
     wayanad_validation["trust_score"]  = build_trust_block("WAYANAD_2024_VAL", WAYANAD_HISTORY)
-    wayanad_validation["alert"]        = build_alert_block(val_score, val_level, val_factors, "Mundakkai-Chooralmala")
+    wayanad_validation["alert"]        = build_alert_block(
+        val_score, val_level, val_factors, "Mundakkai-Chooralmala", district="Wayanad")
     wayanad_validation.pop("_is_validation_case", None)
 
     locations.append(wayanad_validation)

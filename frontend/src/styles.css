@@ -1357,6 +1357,174 @@
   flex-shrink: 0;
 }
 
+/* ---------- Infrastructure graph container & canvas ---------- */
+.infra-graph {
+  border: 2px solid var(--on-surface);
+  background: var(--surface-container-lowest);
+  margin-top: 10px;
+  padding: 14px;
+  position: relative;
+  font-family: var(--font-body);
+}
+.infra-graph .infra-loading,
+.infra-graph .infra-error {
+  font-family: var(--font-body);
+  font-size: 12px;
+  padding: 10px 14px;
+  color: var(--on-surface-variant);
+}
+.infra-graph .infra-error { color: var(--crit); }
+
+.infra-svg-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.infra-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  cursor: grab;
+  background: var(--surface);
+  border: 1px solid var(--on-surface);
+}
+.infra-svg:active { cursor: grabbing; }
+.infra-svg .infra-node-dimmed circle { opacity: 0.2; }
+
+/* Zoom reset button (appears when zoomed/panned) */
+.infra-zoom-reset-wrap {
+  cursor: pointer;
+}
+.infra-zoom-reset-wrap rect {
+  transition: background 0.15s ease;
+}
+.infra-zoom-reset-wrap:hover rect {
+  background: var(--surface-container-low);
+}
+
+/* Zoom/pan hint */
+.infra-zoom-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 6px;
+}
+
+/* Interactive legend: clickable filter items */
+.infra-legend-clickable {
+  cursor: pointer;
+  user-select: none;
+  border-radius: 3px;
+  padding: 0 4px;
+  transition: background 0.15s ease, opacity 0.15s ease;
+}
+.infra-legend-clickable:hover {
+  background: var(--surface-container-low);
+}
+.infra-legend-dimmed {
+  opacity: 0.25 !important;
+}
+
+/* Hover tooltip (HTML overlay following the cursor) */
+.infra-tooltip {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  max-width: 260px;
+}
+.infra-tooltip-inner {
+  background: var(--inverse-surface);
+  color: var(--inverse-on-surface);
+  border: 2px solid var(--on-surface);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  line-height: 1.4;
+}
+.infra-tooltip-title {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.85;
+  margin-bottom: 2px;
+}
+.infra-tooltip-subtitle {
+  font-family: var(--font-headline);
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.infra-tooltip-line {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--inverse-on-surface);
+  opacity: 0.85;
+  line-height: 1.3;
+}
+
+/* Highlighted table row (triggered by node click) */
+.infra-row-highlight {
+  background: #fef3c7 !important;
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+  animation: infra-highlight-flash 0.3s ease-in-out;
+}
+@keyframes infra-highlight-flash {
+  0% { background: #fef3c7; }
+  50% { background: #fef08a; }
+  100% { background: #fef3c7; }
+}
+
+/* Footer for stranded-zone cards */
+.infra-footer {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--on-surface);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.infra-ok {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--risk-low);
+}
+.infra-stranded-card {
+  border: 1px solid var(--crit);
+  background: #FEF2F2;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-family: var(--font-body);
+  font-size: 11.5px;
+}
+.infra-stranded-card strong {
+  font-family: var(--font-mono);
+  font-weight: 800;
+  color: var(--crit);
+}
+.infra-stranded-card em {
+  color: #B45309;
+  font-style: normal;
+}
+.infra-stranded-reason {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--on-surface-variant);
+  margin-top: 2px;
+  line-height: 1.3;
+}
+
 /* ---------- Risk score explanation (expandable) ---------- */
 .risk-exp-head {
   display: flex;
