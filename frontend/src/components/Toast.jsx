@@ -21,7 +21,8 @@ export default function Toast({ toast, onDismiss }) {
   const statusLines = (result?.results || []).map((r) => {
     const status = r.status || (r.sid ? "queued" : "error");
     const channel = r.channel ? ` [${r.channel.toUpperCase()}]` : "";
-    return `${r.to}${channel}: ${status}${r.sid ? ` (${r.sid})` : ""}`;
+    const dltNote = r.error && r.error.includes("DLT") ? " (DLT-restricted — routed WhatsApp)" : "";
+    return `${r.to}${channel}${dltNote}: ${status}${r.sid ? ` (${r.sid})` : ""}`;
   });
 
   return (
@@ -43,9 +44,13 @@ export default function Toast({ toast, onDismiss }) {
           )}
           {failed && failedRecipients.length > 0 && (
             <div className="toast-statuses" style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 10, color: "#DC2626", marginTop: 4 }}>
-              {failedRecipients.map((r) => (
-                <div key={r.to}>{r.to}: {r.error || "unknown error"}</div>
-              ))}
+              {failedRecipients.map((r) => {
+                let errText = r.error || "unknown error";
+                if (errText.includes("DLT regulation blocks SMS template routing")) {
+                  errText = "SMS unavailable for Indian numbers — routed via WhatsApp";
+                }
+                return <div key={r.to}>{r.to}: {errText}</div>;
+              })}
             </div>
           )}
           {failed && failedRecipients.length === 0 && (

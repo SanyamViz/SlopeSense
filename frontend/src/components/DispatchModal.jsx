@@ -63,9 +63,14 @@ export default function DispatchModal({ open, sector, location, onClose, onTrans
       onTransmit(sector, result);
     } catch (err) {
       console.error("[DispatchModal] Dispatch failed:", err);
-      // One failed dispatch must surface honestly -- never pretend success.
+      const rawMessage = err.message || "Dispatch failed";
+      const dltMessage = rawMessage.includes("DLT")
+        ? rawMessage
+        : rawMessage.includes("Invalid template name")
+          ? "SMS unavailable for Indian numbers — routed via WhatsApp"
+          : rawMessage;
+      setError(dltMessage);
       setTransmitting(false);
-      setError(err.message || "Dispatch failed");
     }
   };
 

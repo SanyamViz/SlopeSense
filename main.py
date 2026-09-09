@@ -365,43 +365,84 @@ def dispatch(request: DispatchRequest):
     # content template, then set TWILIO_WHATSAPP_CONTENT_SID to remove this
     # fallback and restore real WhatsApp delivery.
     effective_channel = request.channel
-    if request.channel == "whatsapp" and not os.environ.get("TWILIO_WHATSAPP_CONTENT_SID"):
-        logger.warning(
-            "WhatsApp requested but TWILIO_WHATSAPP_CONTENT_SID is not set. "
-            "Falling back to SMS for this dispatch."
-        )
-        effective_channel = "sms"
-        from_number = os.environ.get("TWILIO_SMS_FROM", "")
-        if not from_number:
-            logger.error("Missing TWILIO_SMS_FROM env var for WhatsApp fallback")
-            raise HTTPException(
-                status_code=500,
-                detail="Missing TWILIO_SMS_FROM env var required for WhatsApp fallback.",
+    is_indian_number = lambda num: num.startswith("+91")
+    if request.channel == "sms":
+        non_indian_recipients = [to for to in recipients if not is_indian_number(to)]
+        indian_recipients = [to for to in recipients if is_indian_number(to)]
+        if indian_recipients:
+            logger.warning(
+                "SMS requested but Indian numbers (+91) are blocked by DLT regulations. "
+                "Rerouting %d Indian recipient(s) to WhatsApp (requires TWILIO_WHATSAPP_CONTENT_SID).",
+                len(indian_recipients),
             )
+            if not os.environ.get("TWILIO_WHATSAPP_CONTENT_SID"):
+                raise HTTPException(
+                    status_code=400,
+                    detail=(
+                        "SMS to Indian numbers (+91) is blocked by DLT regulations. "
+                        "Set TWILIO_WHATSAPP_CONTENT_SID to an approved WhatsApp content template "
+                        "to enable WhatsApp delivery, or remove Indian numbers from DISPATCH_RECIPIENTS."
+                    ),
+                )
+            effective_channel = "whatsapp"
+            from_number = os.environ.get("TWILIO_WHATSAPP_FROM", "")
+            if not from_number:
+                logger.error("Missing TWILIO_WHATSAPP_FROM env var for Indian-number WhatsApp routing")
+                raise HTTPException(
+                    status_code=500,
+                    detail="Missing TWILIO_WHATSAPP_FROM env var required for WhatsApp delivery to Indian numbers.",
+                )
 
     body = f"{request.message_local}\n\n{request.message_en}"
     results = []
     sent = 0
     failed = 0
 
+    whatsapp_content_sid = os.environ.get("TWILIO_WHATSAPP_CONTENT_SID", "")
+
     for to in recipients:
+        per_recipient_channel = effective_channel
         try:
-            if effective_channel == "whatsapp":
+            if is_indian_number(to):
+                per_recipient_channel = "whatsapp"
                 to_addr = f"whatsapp:{to}"
                 from_addr = from_number if from_number.startswith("whatsapp:") else f"whatsapp:{from_number}"
-                content_sid = os.environ.get("TWILIO_WHATSAPP_CONTENT_SID", "")
+                if not whatsapp_content_sid:
+                    raise HTTPException(
+                        status_code=400,
+                        detail=(
+                            "SMS to Indian numbers (+91) is blocked by DLT regulations. "
+                            "Set TWILIO_WHATSAPP_CONTENT_SID to enable WhatsApp delivery."
+                        ),
+                    )
                 logger.info(
-                    "Sending WhatsApp message to=%s from=%s content_sid=%s body_len=%d",
-                    to_addr, from_addr, content_sid, len(body),
+                    "Sending WhatsApp message to Indian number=%s from=%s content_sid=%s body_len=%d",
+                    to_addr, from_addr, whatsapp_content_sid, len(body),
                 )
                 message = client.messages.create(
                     to=to_addr,
                     from_=from_addr,
-                    content_sid=content_sid,
+                    content_sid=whatsapp_content_sid,
+                    content_variables={"1": request.sector, "2": request.location_id},
+                    body=body,
+                )
+            elif effective_channel == "whatsapp":
+                per_recipient_channel = "whatsapp"
+                to_addr = f"whatsapp:{to}"
+                from_addr = from_number if from_number.startswith("whatsapp:") else f"whatsapp:{from_number}"
+                logger.info(
+                    "Sending WhatsApp message to=%s from=%s content_sid=%s body_len=%d",
+                    to_addr, from_addr, whatsapp_content_sid, len(body),
+                )
+                message = client.messages.create(
+                    to=to_addr,
+                    from_=from_addr,
+                    content_sid=whatsapp_content_sid,
                     content_variables={"1": request.sector, "2": request.location_id},
                     body=body,
                 )
             else:
+                per_recipient_channel = "sms"
                 to_addr = to
                 from_addr = from_number
                 logger.info("Sending SMS message to=%s from=%s body_len=%d", to_addr, from_addr, len(body))
@@ -411,18 +452,25 @@ def dispatch(request: DispatchRequest):
                     body=body,
                 )
             logger.info("Message sent successfully: to=%s sid=%s status=%s", to, message.sid, message.status)
-            results.append({"to": to, "sid": message.sid, "status": message.status, "channel": effective_channel})
+            results.append({"to": to, "sid": message.sid, "status": message.status, "channel": per_recipient_channel})
             sent += 1
+        except HTTPException:
+            raise
         except Exception as exc:
             logger.warning("Dispatch to %s failed: %s", to, exc)
             err_msg = str(exc)
-            if "Invalid template name" in err_msg and "Trial accounts" in err_msg:
+            if is_indian_number(to):
+                err_msg = (
+                    f"SMS unavailable for Indian number {to} — DLT regulation blocks SMS template routing. "
+                    f"Routed via WhatsApp instead. WhatsApp error: {err_msg}"
+                )
+            elif "Invalid template name" in err_msg and "Trial accounts" in err_msg:
                 err_msg = (
                     f"{err_msg} | Hint: Twilio trial accounts may require recipient "
                     "verification or a pre-registered template for this destination. "
                     "Verify the number in Twilio Console or upgrade to a full account."
                 )
-            results.append({"to": to, "sid": None, "status": "error", "error": err_msg, "channel": effective_channel})
+            results.append({"to": to, "sid": None, "status": "error", "error": err_msg, "channel": per_recipient_channel})
             failed += 1
 
     # --- Critical-only voice-call escalation ---
