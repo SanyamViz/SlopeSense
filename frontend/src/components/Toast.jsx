@@ -20,7 +20,8 @@ export default function Toast({ toast, onDismiss }) {
 
   const statusLines = (result?.results || []).map((r) => {
     const status = r.status || (r.sid ? "queued" : "error");
-    return `${r.to}: ${status}${r.sid ? ` (${r.sid})` : ""}`;
+    const channel = r.channel ? ` [${r.channel.toUpperCase()}]` : "";
+    return `${r.to}${channel}: ${status}${r.sid ? ` (${r.sid})` : ""}`;
   });
 
   return (
@@ -37,6 +38,13 @@ export default function Toast({ toast, onDismiss }) {
             <div className="toast-statuses" style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 10, color: "#44403C", marginTop: 4 }}>
               {statusLines.map((line, i) => (
                 <div key={i}>{line}</div>
+              ))}
+            </div>
+          )}
+          {failed && failedRecipients.length > 0 && (
+            <div className="toast-statuses" style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 10, color: "#DC2626", marginTop: 4 }}>
+              {failedRecipients.map((r) => (
+                <div key={r.to}>{r.to}: {r.error || "unknown error"}</div>
               ))}
             </div>
           )}

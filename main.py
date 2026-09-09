@@ -415,7 +415,14 @@ def dispatch(request: DispatchRequest):
             sent += 1
         except Exception as exc:
             logger.warning("Dispatch to %s failed: %s", to, exc)
-            results.append({"to": to, "sid": None, "status": "error", "error": str(exc), "channel": effective_channel})
+            err_msg = str(exc)
+            if "Invalid template name" in err_msg and "Trial accounts" in err_msg:
+                err_msg = (
+                    f"{err_msg} | Hint: Twilio trial accounts may require recipient "
+                    "verification or a pre-registered template for this destination. "
+                    "Verify the number in Twilio Console or upgrade to a full account."
+                )
+            results.append({"to": to, "sid": None, "status": "error", "error": err_msg, "channel": effective_channel})
             failed += 1
 
     # --- Critical-only voice-call escalation ---
