@@ -59,8 +59,10 @@ export default function DispatchModal({ open, sector, location, onClose, onTrans
         messageLocal: msg.ml,
         channel: "whatsapp",
       });
+      console.log("[DispatchModal] Success:", result);
       onTransmit(sector, result);
     } catch (err) {
+      console.error("[DispatchModal] Dispatch failed:", err);
       // One failed dispatch must surface honestly -- never pretend success.
       setTransmitting(false);
       setError(err.message || "Dispatch failed");

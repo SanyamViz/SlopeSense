@@ -148,15 +148,11 @@ app = FastAPI(
     description="Read-only risk layer over village-level landslide scores.",
 )
 
-# CORS: explicitly allow the frontend dev server and a placeholder for
-# production. Replace the placeholder with your real deployed frontend URL.
+# CORS: allow all origins for the demo (Vercel frontend, local dev, etc).
+# In production with auth, replace this with an explicit allow-list.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://localhost:3000",
-        "https://slope-sense.vercel.app",
-    ],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -317,14 +313,19 @@ def dispatch(request: DispatchRequest):
         "TWILIO_WHATSAPP_FROM" if request.channel == "whatsapp" else "TWILIO_SMS_FROM",
         "",
     )
+    logger.info(
+        "Dispatch request: sector=%s location_id=%s channel=%s from_number=%s recipients=%d",
+        request.sector, request.location_id, request.channel, from_number, len(recipients),
+    )
     if not from_number:
+        logger.error("Missing from-number env var for channel '%s'", request.channel)
         raise HTTPException(
             status_code=500,
             detail=f"Missing from-number env var for channel '{request.channel}'.",
         )
 
-    recipients = _split_recipients(os.environ.get("DISPATCH_RECIPIENTS", ""))
     if not recipients:
+        logger.error("DISPATCH_RECIPIENTS is empty")
         raise HTTPException(
             status_code=500,
             detail="DISPATCH_RECIPIENTS is empty. Configure comma-separated E.164 numbers.",
@@ -344,11 +345,13 @@ def dispatch(request: DispatchRequest):
                 to_addr = to
                 from_addr = from_number
 
+            logger.info("Sending %s message to=%s from=%s body_len=%d", request.channel, to_addr, from_addr, len(body))
             message = client.messages.create(
                 to=to_addr,
                 from_=from_addr,
                 body=body,
             )
+            logger.info("Message sent successfully: to=%s sid=%s status=%s", to, message.sid, message.status)
             results.append({"to": to, "sid": message.sid, "status": message.status})
             sent += 1
         except Exception as exc:
