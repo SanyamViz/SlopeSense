@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import { levelColor } from "../constants/risk";
 import { playSiren } from "../hooks/useSiren";
+import { dispatchAlert } from "../api/riskClient";
 
 const SECTOR_MESSAGES = {
   Mundakkai: {
@@ -16,13 +18,55 @@ const SECTOR_MESSAGES = {
   },
   Punjirimattom: {
     en: "IMMINENT DEBRIS RUNOUT WATCH: Slope slip detected upstream. Immediate clearance of stream banks ordered.",
-    ml: "മണ്ണിടിച്ചിൽ സാധ്യത: പുഞ്ചിരിമട്ടത്ത് മലവെള്ളപ്പാച്ചിൽ സാധ്യത. അരുവികളുടെ തീരത്തുനിന്ന് ഉടനടി മാറുക.",
+    ml: "മണ്ണിടച്ചിൽ സാധ്യത: പുഞ്ചിരിമട്ടത്ത് മലവെള്ളപ്പാച്ചിൽ സാധ്യത. അരുവികളുടെ തീരത്തുനിന്ന് ഉടനടി മാറുക.",
   },
 };
 
-export default function DispatchModal({ open, sector, onClose, onTransmit }) {
+/** Resolve the real alert text for a sector, falling back to the hardcoded map. */
+function sectorMessages(sector, location) {
+  if (location?.alert) {
+    return {
+      en: location.alert.message_en || SECTOR_MESSAGES[sector]?.en || "",
+      ml: location.alert.message_local || SECTOR_MESSAGES[sector]?.ml || "",
+    };
+  }
+  return SECTOR_MESSAGES[sector] || SECTOR_MESSAGES.Mundakkai;
+}
+
+export default function DispatchModal({ open, sector, location, onClose, onTransmit }) {
+  const [transmitting, setTransmitting] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Reset transient UI state whenever the modal opens/closes or sector changes.
+  useEffect(() => {
+    setTransmitting(false);
+    setError(null);
+  }, [open, sector]);
+
   if (!open || !sector) return null;
-  const msg = SECTOR_MESSAGES[sector] || SECTOR_MESSAGES.Mundakkai;
+  const msg = sectorMessages(sector, location);
+  const locationId = location?.location_id || sector;
+
+  const handleTransmit = async () => {
+    setTransmitting(true);
+    setError(null);
+    playSiren();
+    try {
+      const result = await dispatchAlert({
+        sector,
+        locationId,
+        messageEn: msg.en,
+        messageLocal: msg.ml,
+        channel: "whatsapp",
+      });
+      onTransmit(sector, result);
+    } catch (err) {
+      // One failed dispatch must surface honestly -- never pretend success.
+      setTransmitting(false);
+      setError(err.message || "Dispatch failed");
+    }
+  };
+
   return (
     <div className="dispatch-modal-backdrop show" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="dispatch-modal" onClick={(e) => e.stopPropagation()}>
@@ -62,10 +106,21 @@ export default function DispatchModal({ open, sector, onClose, onTransmit }) {
         </div>
         <div className="modal-foot">
           <button className="btn btn-cancel" onClick={onClose} type="button">[ CANCEL / DISARM ]</button>
-            <button className="btn btn-transmit" onClick={() => { playSiren(); onTransmit(sector); }} type="button">
-            <span className="material-symbols-outlined text-[15px]">send</span>[ TRANSMIT LIVE ALERT ]
+          <button
+            className={`btn btn-transmit ${transmitting ? "opacity-70 cursor-wait" : ""}`}
+            onClick={handleTransmit}
+            disabled={transmitting}
+            type="button"
+          >
+            <span className="material-symbols-outlined text-[15px]">send</span>
+            {transmitting ? "[ TRANSMITTING… ]" : error ? "[ RETRY TRANSMIT ]" : "[ TRANSMIT LIVE ALERT ]"}
           </button>
         </div>
+        {error && (
+          <div className="modal-error" style={{ color: "#DC2626", fontSize: 11, fontFamily: "JetBrains Mono, monospace", marginTop: 8 }}>
+            ⚠ DISPATCH FAILED: {error}
+          </div>
+        )}
       </div>
     </div>
   );

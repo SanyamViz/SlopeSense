@@ -228,6 +228,39 @@ export async function fetchReload() {
 }
 
 /**
+ * Dispatch a real SMS/WhatsApp alert via Twilio to every configured recipient.
+ *
+ * Body shape matches POST /dispatch on the backend:
+ *   { sector, location_id, message_en, message_local, channel }
+ *
+ * channel defaults to "whatsapp". Returns the dispatch result:
+ *   { sent, failed, results: [{ to, sid, status }, ...] }
+ * Throws on non-2xx so callers can surface an honest error state.
+ */
+export async function dispatchAlert({ sector, locationId, messageEn, messageLocal, channel = "whatsapp" }) {
+  return withRetry(async () => {
+    const res = await apiFetch("/dispatch", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        sector,
+        location_id: locationId,
+        message_en: messageEn,
+        message_local: messageLocal,
+        channel,
+      }),
+    });
+    if (!res.ok) {
+      throw createApiError("/dispatch", res);
+    }
+    return res.json();
+  });
+}
+
+/**
  * Fetch impact assessment: nearby hospitals, available capacity, and alternative
  * evacuation routes for every zone.
  */

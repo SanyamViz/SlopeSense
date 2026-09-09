@@ -14,10 +14,14 @@ cacheable read layer. Use GET /reload to pick up a freshly-generated file.
 """
 import json
 import logging
+import os
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
+from xml.sax.saxutils import escape as _xml_escape
 
 from fastapi import FastAPI, HTTPException, Query
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -26,8 +30,104 @@ from config import CONFIG
 from scoring import score_single_location
 from graph_analysis import compute_impact_assessment
 
+# Twilio REST client for SMS/WhatsApp alert dispatch. Credentials come from
+# the environment (TWILIO_ACCOUNT_SID / TWILIO_AUTH_TOKEN) -- never hardcode.
+# The client is created lazily so a missing credential does not break app import.
+_twilio_client = None
+
+
+def _get_twilio_client():
+    global _twilio_client
+    if _twilio_client is None:
+        from twilio.rest import Client
+
+        account_sid = os.environ.get("TWILIO_ACCOUNT_SID", "")
+        auth_token = os.environ.get("TWILIO_AUTH_TOKEN", "")
+        if not account_sid or not auth_token:
+            raise RuntimeError(
+                "Twilio credentials not configured. Set TWILIO_ACCOUNT_SID and "
+                "TWILIO_AUTH_TOKEN environment variables."
+            )
+        _twilio_client = Client(account_sid, auth_token)
+    return _twilio_client
+
+
+def _split_recipients(raw: str) -> list:
+    """Parse a comma-separated list of E.164 numbers, dropping blanks."""
+    if not raw:
+        return []
+    return [n.strip() for n in raw.split(",") if n.strip()]
+
+
+# --- Voice-call escalation threshold ---
+# A zone triggers a Twilio Voice call when risk_level == "severe" AND its
+# elderly_pct exceeds this value. Configurable via environment variable so
+# the demo can be tuned without a code change. Default 25 (%).
+_VOICE_CALL_ELDERLY_THRESHOLD = float(
+    os.environ.get("VOICE_CALL_ELDERLY_THRESHOLD_PCT", "25")
+)
+
+
+def _build_voice_twiml(text_ml: str, text_en: str, location_id: str) -> str:
+    """Build TwiML for a voice-call escalation to a severe+elderly zone.
+
+    Uses <Say> with Malayalam (ml-IN, via a neural voice) as the primary
+    language, followed by an English <Say> for bilingual coverage.  The
+    alert text is reused verbatim from alert_generator.py (passed in as
+    ``message_local`` / ``message_en``) -- no new copy is written here.
+
+    If <Say> Malayalam pronunciation quality is insufficient in production,
+    swap both <Say> blocks below for a single <Play> of a pre-recorded MP3:
+
+    # TODO: drop the real bilingual Malayalam+English recording at:
+    #   https://your-bucket.s3.ap-south-1.amazonaws.com/keraland/voice/<location_id>_alert.mp3
+    # and replace the <Say> blocks above with:
+    #   <Play>https://your-bucket.s3.ap-south-1.amazonaws.com/keraland/voice/<location_id>_alert.mp3</Play>
+    """
+    safe_ml = _xml_escape(text_ml or text_en or "")
+    safe_en = _xml_escape(text_en or "")
+    # loop="1" ensures the message is spoken exactly once (no repeat).
+    return (
+        f'<Response>'
+        f'<Say language="ml-IN" voice="Polly.Raveena" loop="1">{safe_ml}</Say>'
+        f'<Say language="en-US" voice="Polly.Joanna" loop="1">{safe_en}</Say>'
+        f'</Response>'
+    )
+
+
+def dispatch_voice_call(
+    location_id: str,
+    message_local: str,
+    message_en: str,
+    to: str,
+    from_number: str,
+) -> dict:
+    """Place a single Twilio Voice call and log the attempt.
+
+    Returns a result dict matching the shape used by the SMS/WhatsApp
+    dispatch results: { to, sid, status, success, error? }.
+    """
+    client = _get_twilio_client()
+    twiml = _build_voice_twiml(message_local, message_en, location_id)
+    ts = datetime.now(timezone.utc).isoformat()
+    try:
+        call = client.calls.create(twiml=twiml, to=to, from_=from_number)
+        logger.info(
+            "Voice call dispatched: zone_id=%s to=%s call_sid=%s status=%s timestamp=%s",
+            location_id, to, call.sid, call.status, ts,
+        )
+        return {"to": to, "sid": call.sid, "status": call.status, "success": True}
+    except Exception as exc:
+        logger.warning(
+            "Voice call failed: zone_id=%s to=%s error=%s timestamp=%s",
+            location_id, to, str(exc), ts,
+        )
+        return {"to": to, "sid": None, "status": "error", "error": str(exc), "success": False}
+
+
 logger = logging.getLogger("backend")
 OUTPUT_PATH = Path(CONFIG["output"])
+FRONTEND_DIST = Path(__file__).resolve().parent / "frontend" / "dist"
 
 # Level -> minimum inclusive score, derived from configurable thresholds so the
 # active-alert endpoint stays in sync with config (no magic numbers).
@@ -83,8 +183,9 @@ def reload_data():
     return {"reloaded": True, "total_locations": _DOC["metadata"]["total_locations"]}
 
 
-@app.get("/", tags=["info"])
-def index():
+@app.get("/api", tags=["info"])
+def api_index():
+    """API discovery index (kept at /api so the dashboard SPA can own /)."""
     return {
         "service": "Landslide Risk API",
         "endpoints": {
@@ -94,6 +195,7 @@ def index():
             "reload": "GET /reload -- reload output JSON",
             "infrastructure": "GET /infrastructure -- graph + stranded zones",
             "impact-assessment": "GET /impact-assessment -- hospitals nearby, capacity, alternative routes",
+            "dispatch": "POST /dispatch -- send SMS/WhatsApp alerts via Twilio; escalates to voice call for severe+elderly zones",
             "docs": "GET /docs -- interactive Swagger UI",
         },
     }
@@ -172,6 +274,127 @@ def active_alerts(
         "min_level": min_level,
         "count": len(locs),
         "locations": locs,
+    }
+
+
+class DispatchRequest(BaseModel):
+    sector: str
+    location_id: str
+    message_en: str
+    message_local: str
+    channel: str = "whatsapp"
+
+
+@app.post("/dispatch", tags=["dispatch"])
+def dispatch(request: DispatchRequest):
+    """Send a real SMS/WhatsApp alert to every configured recipient via Twilio.
+
+    Body:
+        { sector, location_id, message_en, message_local, channel }
+
+    channel is "whatsapp" or "sms". The WhatsApp sandbox requires a
+    "whatsapp:" prefix on both the from and to numbers.
+
+    Each recipient is attempted individually so a single bad number cannot
+    abort the whole broadcast. Returns { sent, failed, results: [...] }.
+
+    Voice-call escalation:
+        When the location for ``location_id`` has risk_level == "severe" AND
+        its vulnerability.elderly_pct exceeds VOICE_CALL_ELDERLY_THRESHOLD_PCT
+        (default 25), a Twilio Voice call is also placed to every recipient.
+        The call uses <Say> TwiML with the Malayalam alert text (message_local)
+        and an English <Say> fallback.  Moderate / high / low zones are never
+        escalated to voice.  Voice results appear under the "voice_calls" key
+        in the response.
+    """
+    if request.channel not in ("whatsapp", "sms"):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unsupported channel '{request.channel}'. Use 'whatsapp' or 'sms'.",
+        )
+
+    client = _get_twilio_client()
+
+    from_number = os.environ.get(
+        "TWILIO_WHATSAPP_FROM" if request.channel == "whatsapp" else "TWILIO_SMS_FROM",
+        "",
+    )
+    if not from_number:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Missing from-number env var for channel '{request.channel}'.",
+        )
+
+    recipients = _split_recipients(os.environ.get("DISPATCH_RECIPIENTS", ""))
+    if not recipients:
+        raise HTTPException(
+            status_code=500,
+            detail="DISPATCH_RECIPIENTS is empty. Configure comma-separated E.164 numbers.",
+        )
+
+    body = f"{request.message_local}\n\n{request.message_en}"
+    results = []
+    sent = 0
+    failed = 0
+
+    for to in recipients:
+        try:
+            if request.channel == "whatsapp":
+                to_addr = f"whatsapp:{to}"
+                from_addr = from_number if from_number.startswith("whatsapp:") else f"whatsapp:{from_number}"
+            else:
+                to_addr = to
+                from_addr = from_number
+
+            message = client.messages.create(
+                to=to_addr,
+                from_=from_addr,
+                body=body,
+            )
+            results.append({"to": to, "sid": message.sid, "status": message.status})
+            sent += 1
+        except Exception as exc:
+            logger.warning("Dispatch to %s failed: %s", to, exc)
+            results.append({"to": to, "sid": None, "status": "error", "error": str(exc)})
+            failed += 1
+
+    # --- Critical-only voice-call escalation ---
+    # ONLY for zones that are severe-risk AND have an above-threshold elderly
+    # population.  Moderate / high / low zones never trigger voice calls.
+    # The threshold is configurable via VOICE_CALL_ELDERLY_THRESHOLD_PCT (default 25).
+    voice_calls = []
+    loc = next(
+        (l for l in _DOC.get("locations", []) if l["location_id"] == request.location_id),
+        None,
+    )
+    elderly_pct = (loc or {}).get("vulnerability", {}).get("elderly_pct", 0) if loc else 0
+    if loc and loc.get("risk_level") == "severe" and elderly_pct > _VOICE_CALL_ELDERLY_THRESHOLD:
+        voice_from = os.environ.get("TWILIO_SMS_FROM", "")
+        if voice_from:
+            for to in recipients:
+                result = dispatch_voice_call(
+                    request.location_id,
+                    request.message_local,
+                    request.message_en,
+                    to,
+                    voice_from,
+                )
+                voice_calls.append(result)
+        else:
+            logger.warning(
+                "Voice call skipped for zone %s: TWILIO_SMS_FROM not set",
+                request.location_id,
+            )
+
+    return {
+        "sector": request.sector,
+        "location_id": request.location_id,
+        "channel": request.channel,
+        "sent": sent,
+        "failed": failed,
+        "results": results,
+        "voice_calls_issued": len(voice_calls),
+        "voice_calls": voice_calls,
     }
 
 
@@ -260,3 +483,57 @@ def get_config():
         "risk_thresholds": CONFIG["risk_thresholds"],
         "normalization": norm,
     }
+
+
+# ---------------------------------------------------------------------------
+# Frontend dashboard (SPA).
+#
+# The combined Docker/Render build (Dockerfile) compiles the React app into
+# frontend/dist/ inside the same image that runs uvicorn. Mounting that
+# directory as static files here lets the deployed service serve the dashboard
+# at the same origin as the JSON API, so the SPA's relative fetches to
+# /risk-map etc. resolve without any cross-origin or VITE_API_BASE_URL config.
+#
+# The API routes above are registered first, so they keep taking precedence
+# over the catch-all mount; any unmatched path falls through to the SPA's
+# index.html (the Vite build emits a single index.html that loads main.jsx).
+# ---------------------------------------------------------------------------
+if FRONTEND_DIST.is_dir():
+    # Mount the compiled bundle as static assets (CSS/JS/images) so the SPA
+    # loads its real files instead of falling back to index.html for each one.
+    app.mount("/static", StaticFiles(directory=str(FRONTEND_DIST), html=False), name="frontend-static")
+    logger.info("Mounted frontend dashboard assets from %s", FRONTEND_DIST)
+
+    @app.get("/{full_path:path}", include_in_schema=False)
+    def _serve_spa(full_path: str):
+        """Serve the SPA for any non-API path (client-side routing).
+
+        Real files inside frontend/dist (assets, index.html, favicon, ...) are
+        served directly so the browser can load the compiled bundle; everything
+        else falls back to index.html so client-side React Router keeps working.
+        API routes registered above take precedence because they are matched
+        first by FastAPI's router.
+        """
+        candidate = FRONTEND_DIST / full_path
+        if candidate.is_file():
+            from fastapi.responses import FileResponse
+            return FileResponse(str(candidate))
+        return _FRONTEND_INDEX_RESPONSE
+else:
+    logger.warning(
+        "Frontend dist directory not found at %s -- the dashboard will not be "
+        "served. Build the frontend (npm run build) or run the Dockerfile.",
+        FRONTEND_DIST,
+    )
+
+
+def _build_frontend_index_response():
+    """Build the cached FileResponse for the SPA's index.html."""
+    from fastapi.responses import FileResponse
+    index_path = FRONTEND_DIST / "index.html"
+    if index_path.is_file():
+        return FileResponse(str(index_path), media_type="text/html; charset=utf-8")
+    return None
+
+
+_FRONTEND_INDEX_RESPONSE = _build_frontend_index_response()

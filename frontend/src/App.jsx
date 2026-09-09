@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { fetchRiskMap, fetchConfig, onWarmingChange } from "./api/riskClient";
+import { fetchRiskMap, fetchConfig, fetchImpactAssessment, onWarmingChange } from "./api/riskClient";
 import { levelColor, scoreToLevel, RISK_LABELS } from "./constants/risk";
 import "./styles.css";
 import MastheadMicro from "./components/MastheadMicro";
@@ -34,6 +34,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState("dashboard"); // "dashboard" | "infrastructure"
   const [warmingUp, setWarmingUp] = useState(false);
   const [now, setNow] = useState(new Date());
+  const [impact, setImpact] = useState(null);
 
   useEffect(() => {
     const unsub = onWarmingChange(setWarmingUp);
@@ -45,6 +46,16 @@ export default function App() {
       .catch((e) => { if (!cancelled) setError(e.message || "Failed to load risk data"); })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; unsub(); };
+  }, []);
+
+  // Fetch the impact assessment once so the dashboard stack rows can quote
+  // real stranded-zone / alternative-route data instead of literal strings.
+  useEffect(() => {
+    let cancelled = false;
+    fetchImpactAssessment(20)
+      .then((d) => { if (!cancelled) setImpact(d); })
+      .catch(() => { if (!cancelled) setImpact(null); });
+    return () => { cancelled = true; };
   }, []);
 
   useEffect(() => {
@@ -59,11 +70,27 @@ export default function App() {
   const isSevere = rain >= 50 || soil >= 28;
   const isCriticalSeverance = rain > 80 || soil > 40;
 
-  const stackRows = useMemo(() => buildStackRows(locations, isSevere, isCriticalSeverance), [locations, isSevere, isCriticalSeverance]);
-  const hero = useMemo(() => computeHero(locations, isSevere, isCriticalSeverance), [locations, isSevere, isCriticalSeverance]);
+  // Build a zone_id -> impact zone map (same data InfrastructureGraph uses).
+  const impactMap = useMemo(() => {
+    const m = {};
+    for (const z of impact?.zones || []) m[z.zone_id] = z;
+    return m;
+  }, [impact]);
+
+  const stackRows = useMemo(
+    () => buildStackRows(locations, isSevere, isCriticalSeverance, impactMap),
+    [locations, isSevere, isCriticalSeverance, impactMap]
+  );
+  const hero = useMemo(
+    () => computeHero(locations, isSevere, isCriticalSeverance, impactMap),
+    [locations, isSevere, isCriticalSeverance, impactMap]
+  );
   const advisory = useMemo(() => computeAdvisory(isSevere, isCriticalSeverance), [isSevere, isCriticalSeverance]);
   const highSevereCount = useMemo(() => computeHighSevereCount(locations), [locations]);
-  const tiles = useMemo(() => computeTiles(locations, isSevere, isCriticalSeverance), [locations, isSevere, isCriticalSeverance]);
+  const tiles = useMemo(
+    () => computeTiles(locations, isSevere, isCriticalSeverance),
+    [locations, isSevere, isCriticalSeverance]
+  );
 
   // Selected location object for SidePanel and WhatIfPanel
   const selectedLocation = useMemo(
@@ -72,7 +99,17 @@ export default function App() {
   );
 
   const handleDispatch = (id) => { setModalSector(id); setModalOpen(true); };
-  const handleTransmit = (sector) => { setModalOpen(false); setToast({ key: Date.now(), sector }); };
+  const handleTransmit = (sector, result) => {
+    setModalOpen(false);
+    setToast({ key: Date.now(), sector, result });
+  };
+
+  // Resolve the real location record (with alert.message_en/message_local) for
+  // the sector currently open in the dispatch modal.
+  const modalLocation = useMemo(
+    () => locations.find((l) => l.location_id === modalSector) ?? null,
+    [locations, modalSector]
+  );
 
   if (warmingUp) {
     return (
@@ -104,7 +141,7 @@ export default function App() {
         <div style={{ maxWidth: 480, textAlign: "center", fontFamily: "JetBrains Mono, monospace" }}>
           <div style={{ color: "#DC2626", fontWeight: 800, fontSize: 14, marginBottom: 8, letterSpacing: "0.08em" }}>⚠ BACKEND UNREACHABLE</div>
           <div style={{ color: "#44403C", fontSize: 12, marginBottom: 16 }}>{error}</div>
-          <div style={{ color: "#44403C", fontSize: 11 }}>Make sure the FastAPI server is running:<br /><code style={{ background: "#F5F1E8", padding: "2px 6px", borderRadius: 2 }}>uvicorn main:app --port 8000</code><br />from the project root (<code>Kavs/</code>)</div>
+          <div style={{ color: "#44403C", fontSize: 11 }}>Make sure the FastAPI server is running:<br /><code style={{ background: "#F5F1E8", padding: "2px 6px", borderRadius: 2 }}>uvicorn main:app --port 8000</code><br />from the project root (<code>SlopeSense/</code>)</div>
         </div>
       </div>
     );
@@ -214,19 +251,19 @@ export default function App() {
 
       <footer className="app-footer">
         <div className="foot-left">
-          <span className="foot-item"><span className="dot" />STATION SENSORS: <span className="foot-val">42/44 ONLINE</span></span>
-          <span className="foot-item">INFERENCE LATENCY: <span className="foot-latency">14ms</span></span>
-          <span className="foot-item">GRAPH ENGINE: <span className="foot-graph">NetworkX v3.2 (WebSocket Synced)</span></span>
-          <span className="foot-item foot-source">RAINFALL: <span className="foot-source-val">IMD</span> · TERRAIN: <span className="foot-source-val">Bhuvan DEM</span> · MODEL: <span className="foot-source-val">v2.1</span></span>
+          <span className="foot-item"><span className="dot" />LOCATIONS INDEXED: <span className="foot-val">{locations.length}</span></span>
+          <span className="foot-item">INFERENCE LATENCY: <span className="foot-latency foot-illustrative">14ms (demo)</span></span>
+          <span className="foot-item">GRAPH ENGINE: <span className="foot-graph">NetworkX v3.2</span></span>
+          <span className="foot-item foot-source">RAINFALL: <span className="foot-source-val">IMD</span> · TERRAIN: <span className="foot-source-val">Bhuvan DEM</span> · MODEL: <span className="foot-source-val">{doc?.metadata?.model_version || "—"}</span></span>
         </div>
         <div className="foot-right">
-          <span className="foot-model">MODEL: <span className="model-name">GradientBoost-Landslide v4.1</span></span>
+          <span className="foot-model">MODEL: <span className="model-name">{doc?.metadata?.model_version || "—"}</span></span>
           <span className="foot-command">COMMAND CELL: WAYANAD DISTRICT HQ</span>
           <span className="foot-timestamp">Last updated: {now.toLocaleTimeString()}</span>
         </div>
       </footer>
 
-      <DispatchModal open={modalOpen} sector={modalSector} onClose={() => setModalOpen(false)} onTransmit={handleTransmit} />
+      <DispatchModal open={modalOpen} sector={modalSector} location={modalLocation} onClose={() => setModalOpen(false)} onTransmit={handleTransmit} />
       <Toast toast={toast} onDismiss={() => setToast(null)} />
     </div>
   );

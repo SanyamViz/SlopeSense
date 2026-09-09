@@ -15,3 +15,6 @@ scipy>=1.10
 
 # HTTP client for data download scripts
 requests>=2.31
+
+# Twilio REST client for SMS/WhatsApp alert dispatch
+twilio>=8.0
