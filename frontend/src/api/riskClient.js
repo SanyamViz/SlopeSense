@@ -57,10 +57,14 @@ function setWarming(active) {
   warmingListeners.forEach((fn) => fn(isActive));
 }
 
-function createApiError(endpoint, res) {
-  const err = new Error(`Risk API ${endpoint} returned ${res.status} ${res.statusText}`);
+function createApiError(endpoint, res, body) {
+  const err = new Error(
+    `Risk API ${endpoint} returned ${res.status} ${res.statusText}` +
+      (body ? `: ${typeof body === "string" ? body : JSON.stringify(body)}` : "")
+  );
   err.status = res.status;
   err.endpoint = endpoint;
+  err.body = body;
   return err;
 }
 
@@ -134,7 +138,7 @@ export async function fetchRiskMap() {
       headers: { Accept: "application/json" },
     });
     if (!res.ok) {
-      throw createApiError("/risk-map", res);
+      throw createApiError("/risk-map", res, await res.text().catch(() => null));
     }
     return res.json();
   });
@@ -147,7 +151,7 @@ export async function fetchInfrastructure() {
       headers: { Accept: "application/json" },
     });
     if (!res.ok) {
-      throw createApiError("/infrastructure", res);
+      throw createApiError("/infrastructure", res, await res.text().catch(() => null));
     }
     return res.json();
   });
@@ -160,7 +164,7 @@ export async function fetchRiskById(id) {
       headers: { Accept: "application/json" },
     });
     if (!res.ok) {
-      throw createApiError(`/risk/${id}`, res);
+      throw createApiError(`/risk/${id}`, res, await res.text().catch(() => null));
     }
     return res.json();
   });
@@ -174,7 +178,7 @@ export async function fetchActiveAlerts(minLevel = "high") {
       { headers: { Accept: "application/json" } }
     );
     if (!res.ok) {
-      throw createApiError("/alerts/active", res);
+      throw createApiError("/alerts/active", res, await res.text().catch(() => null));
     }
     return res.json();
   });
@@ -187,7 +191,7 @@ export async function fetchConfig() {
       headers: { Accept: "application/json" },
     });
     if (!res.ok) {
-      throw createApiError("/config", res);
+      throw createApiError("/config", res, await res.text().catch(() => null));
     }
     return res.json();
   });
@@ -205,7 +209,7 @@ export async function fetchSimulate(locationId, overrides = {}) {
       body: JSON.stringify({ location_id: locationId, overrides }),
     });
     if (!res.ok) {
-      throw createApiError("/simulate", res);
+      throw createApiError("/simulate", res, await res.text().catch(() => null));
     }
     return res.json();
   });
@@ -221,7 +225,7 @@ export async function fetchReload() {
       headers: { Accept: "application/json" },
     });
     if (!res.ok) {
-      throw createApiError("/reload", res);
+      throw createApiError("/reload", res, await res.text().catch(() => null));
     }
     return res.json();
   });
@@ -254,7 +258,7 @@ export async function dispatchAlert({ sector, locationId, messageEn, messageLoca
       }),
     });
     if (!res.ok) {
-      throw createApiError("/dispatch", res);
+      throw createApiError("/dispatch", res, await res.text().catch(() => null));
     }
     return res.json();
   });
@@ -271,7 +275,7 @@ export async function fetchImpactAssessment(radiusKm = 20) {
       { headers: { Accept: "application/json" } }
     );
     if (!res.ok) {
-      throw createApiError("/impact-assessment", res);
+      throw createApiError("/impact-assessment", res, await res.text().catch(() => null));
     }
     return res.json();
   });
