@@ -310,13 +310,20 @@ def dispatch(request: DispatchRequest):
     Each recipient is attempted individually so a single bad number cannot
     abort the whole broadcast. Returns { sent, failed, results: [...] }.
 
+    WhatsApp Content Template requirement:
+        Twilio WhatsApp Business API requires an approved content template
+        (content_sid) for outbound messages outside a 24-hour session window.
+        If TWILIO_WHATSAPP_CONTENT_SID is not set, the endpoint falls back
+        to SMS automatically and logs the fallback. Set TWILIO_WHATSAPP_CONTENT_SID
+        to an approved template SID to restore real WhatsApp delivery.
+
     Voice-call escalation:
         When the location for ``location_id`` has risk_level == "severe" AND
         its vulnerability.elderly_pct exceeds VOICE_CALL_ELDERLY_THRESHOLD_PCT
         (default 25), a Twilio Voice call is also placed to every recipient.
         The call uses <Say> TwiML with the Malayalam alert text (message_local)
-        and an English <Say> fallback.  Moderate / high / low zones are never
-        escalated to voice.  Voice results appear under the "voice_calls" key
+        and an English <Say> fallback.  Moderate / high / low zones never
+        trigger voice calls.  Voice results appear under the "voice_calls" key
         in the response.
     """
     if request.channel not in ("whatsapp", "sms"):
@@ -350,6 +357,28 @@ def dispatch(request: DispatchRequest):
             detail="DISPATCH_RECIPIENTS is empty. Configure comma-separated E.164 numbers.",
         )
 
+    # --- WhatsApp Content Template guard ---
+    # Twilio WhatsApp Business API requires an approved content template
+    # (content_sid) for outbound messages that are not within a 24-hour session.
+    # For the demo, if no content SID is configured, fall back to SMS so the
+    # dispatch still succeeds. TODO: create and submit an approved WhatsApp
+    # content template, then set TWILIO_WHATSAPP_CONTENT_SID to remove this
+    # fallback and restore real WhatsApp delivery.
+    effective_channel = request.channel
+    if request.channel == "whatsapp" and not os.environ.get("TWILIO_WHATSAPP_CONTENT_SID"):
+        logger.warning(
+            "WhatsApp requested but TWILIO_WHATSAPP_CONTENT_SID is not set. "
+            "Falling back to SMS for this dispatch."
+        )
+        effective_channel = "sms"
+        from_number = os.environ.get("TWILIO_SMS_FROM", "")
+        if not from_number:
+            logger.error("Missing TWILIO_SMS_FROM env var for WhatsApp fallback")
+            raise HTTPException(
+                status_code=500,
+                detail="Missing TWILIO_SMS_FROM env var required for WhatsApp fallback.",
+            )
+
     body = f"{request.message_local}\n\n{request.message_en}"
     results = []
     sent = 0
@@ -357,25 +386,36 @@ def dispatch(request: DispatchRequest):
 
     for to in recipients:
         try:
-            if request.channel == "whatsapp":
+            if effective_channel == "whatsapp":
                 to_addr = f"whatsapp:{to}"
                 from_addr = from_number if from_number.startswith("whatsapp:") else f"whatsapp:{from_number}"
+                content_sid = os.environ.get("TWILIO_WHATSAPP_CONTENT_SID", "")
+                logger.info(
+                    "Sending WhatsApp message to=%s from=%s content_sid=%s body_len=%d",
+                    to_addr, from_addr, content_sid, len(body),
+                )
+                message = client.messages.create(
+                    to=to_addr,
+                    from_=from_addr,
+                    content_sid=content_sid,
+                    content_variables={"1": request.sector, "2": request.location_id},
+                    body=body,
+                )
             else:
                 to_addr = to
                 from_addr = from_number
-
-            logger.info("Sending %s message to=%s from=%s body_len=%d", request.channel, to_addr, from_addr, len(body))
-            message = client.messages.create(
-                to=to_addr,
-                from_=from_addr,
-                body=body,
-            )
+                logger.info("Sending SMS message to=%s from=%s body_len=%d", to_addr, from_addr, len(body))
+                message = client.messages.create(
+                    to=to_addr,
+                    from_=from_addr,
+                    body=body,
+                )
             logger.info("Message sent successfully: to=%s sid=%s status=%s", to, message.sid, message.status)
-            results.append({"to": to, "sid": message.sid, "status": message.status})
+            results.append({"to": to, "sid": message.sid, "status": message.status, "channel": effective_channel})
             sent += 1
         except Exception as exc:
             logger.warning("Dispatch to %s failed: %s", to, exc)
-            results.append({"to": to, "sid": None, "status": "error", "error": str(exc)})
+            results.append({"to": to, "sid": None, "status": "error", "error": str(exc), "channel": effective_channel})
             failed += 1
 
     # --- Critical-only voice-call escalation ---
@@ -410,6 +450,7 @@ def dispatch(request: DispatchRequest):
         "sector": request.sector,
         "location_id": request.location_id,
         "channel": request.channel,
+        "effective_channel": effective_channel,
         "sent": sent,
         "failed": failed,
         "results": results,
@@ -534,6 +575,9 @@ if FRONTEND_DIST.is_dir():
         API routes registered above take precedence because they are matched
         first by FastAPI's router.
         """
+        if full_path in {"favicon.ico", "favicon.svg", "apple-touch-icon.png", "robots.txt"}:
+            from fastapi.responses import Response
+            return Response(status_code=204)
         candidate = FRONTEND_DIST / full_path
         if candidate.is_file():
             from fastapi.responses import FileResponse
