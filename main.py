@@ -148,14 +148,17 @@ app = FastAPI(
     description="Read-only risk layer over village-level landslide scores.",
 )
 
-# CORS: allow all origins for the demo (Vercel frontend, local dev, etc).
-# In production with auth, replace this with an explicit allow-list.
+# CORS: explicitly allow the production frontend and local Vite dev server.
+# No cookies/credentials are used anywhere in the app, so this does not need
+# allow_credentials=True and we can keep a tight allow-list.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=[
+        "https://slope-sense.vercel.app",
+        "http://localhost:5173",
+    ],
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "Accept"],
 )
 
 
