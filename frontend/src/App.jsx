@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { fetchRiskMap, fetchConfig } from "./api/riskClient";
+import { fetchRiskMap, fetchConfig, onWarmingChange } from "./api/riskClient";
 import { levelColor, scoreToLevel, RISK_LABELS } from "./constants/risk";
 import "./styles.css";
 import MastheadMicro from "./components/MastheadMicro";
@@ -15,7 +15,7 @@ import AlertBanner from "./components/AlertBanner";
 import SidePanel from "./components/SidePanel";
 import WhatIfPanel from "./components/WhatIfPanel";
 import InfrastructureGraph from "./components/InfrastructureGraph";
-import { buildStackRows, computeHero, computeAdvisory, computeTiles } from "./engine";
+import { buildStackRows, computeHero, computeAdvisory, computeTiles, computeHighSevereCount } from "./engine";
 
 export default function App() {
   const [doc, setDoc] = useState(null);
@@ -32,8 +32,11 @@ export default function App() {
   const [modalSector, setModalSector] = useState(null);
   const [toast, setToast] = useState(null);
   const [activeTab, setActiveTab] = useState("dashboard"); // "dashboard" | "infrastructure"
+  const [warmingUp, setWarmingUp] = useState(false);
+  const [now, setNow] = useState(new Date());
 
   useEffect(() => {
+    const unsub = onWarmingChange(setWarmingUp);
     let cancelled = false;
     setLoading(true);
     setError(null);
@@ -41,7 +44,12 @@ export default function App() {
       .then(([d, c]) => { if (!cancelled) { setDoc(d); setCfg(c); } })
       .catch((e) => { if (!cancelled) setError(e.message || "Failed to load risk data"); })
       .finally(() => { if (!cancelled) setLoading(false); });
-    return () => { cancelled = true; };
+    return () => { cancelled = true; unsub(); };
+  }, []);
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(id);
   }, []);
 
   const locations = doc?.locations ?? [];
@@ -54,6 +62,7 @@ export default function App() {
   const stackRows = useMemo(() => buildStackRows(locations, isSevere, isCriticalSeverance), [locations, isSevere, isCriticalSeverance]);
   const hero = useMemo(() => computeHero(locations, isSevere, isCriticalSeverance), [locations, isSevere, isCriticalSeverance]);
   const advisory = useMemo(() => computeAdvisory(isSevere, isCriticalSeverance), [isSevere, isCriticalSeverance]);
+  const highSevereCount = useMemo(() => computeHighSevereCount(locations), [locations]);
   const tiles = useMemo(() => computeTiles(locations, isSevere, isCriticalSeverance), [locations, isSevere, isCriticalSeverance]);
 
   // Selected location object for SidePanel and WhatIfPanel
@@ -64,6 +73,19 @@ export default function App() {
 
   const handleDispatch = (id) => { setModalSector(id); setModalOpen(true); };
   const handleTransmit = (sector) => { setModalOpen(false); setToast({ key: Date.now(), sector }); };
+
+  if (warmingUp) {
+    return (
+      <div className="app" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}>
+        <div style={{ textAlign: "center", fontFamily: "JetBrains Mono, monospace" }}>
+          <div className="spinner" style={{ margin: "0 auto 16px" }} />
+          <div style={{ color: "#0052FF", fontWeight: 700, fontSize: 13, letterSpacing: "0.1em" }}>
+            WAKING UP THE SERVER, THIS MAY TAKE UP TO A MINUTE…
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -90,7 +112,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <MastheadMicro title="EMERGENCY DISPATCH · WAYANAD DISTRICT HQ" cycle="CYCLE #1,482 · DOPPLER SYNCED" live="19:15:11 IST" />
+      <MastheadMicro title="EMERGENCY DISPATCH · WAYANAD DISTRICT HQ" cycle="CYCLE #1,482 · DOPPLER SYNCED" />
       <TopBar counts={counts} total={doc?.metadata?.total_locations ?? locations.length} modelVersion={doc?.metadata?.model_version} generatedAt={doc?.metadata?.generated_at} search={search} onSearch={setSearch} />
       <AlertRibbon isSevere={isSevere} isCriticalSeverance={isCriticalSeverance} gaugeReadout={isCriticalSeverance ? "+4.4m (CRITICAL RUNOUT)" : isSevere ? "+3.8m (DANGER PEAK)" : "+1.1m (SAFE BASIN)"} alertText={isCriticalSeverance ? "CRITICAL SEVERANCE WARNING: CHOORALMALA-MUNDAKKAI SPUR COMPLETELY RUPTURED — MAXIMUM EVACUATION DISPATCH ARMED" : isSevere ? "CRITICAL SITUATION: MUNDAKKAI & ATTAMALA FULLY ISOLATED — CHOORALMALA BRIDGE SEVERED AT KM 14+200" : "ELEVATED MONITORING: ALL PRIMARY CORRIDORS ACCESSIBLE — MONITORING ACTIVE INFLOW AT CHOORALMALA"} alertIcon={isSevere ? "error" : "check_circle"} />
 
@@ -185,7 +207,7 @@ export default function App() {
                 Stranded-zone analysis · Hospital proximity · Alternative evacuation routes · Real data from <code>/infrastructure</code> &amp; <code>/impact-assessment</code>
               </p>
             </div>
-            <InfrastructureGraph locations={locations} />
+            <InfrastructureGraph locations={locations} highSevereCount={highSevereCount} />
           </section>
         )}
       </main>
@@ -195,10 +217,12 @@ export default function App() {
           <span className="foot-item"><span className="dot" />STATION SENSORS: <span className="foot-val">42/44 ONLINE</span></span>
           <span className="foot-item">INFERENCE LATENCY: <span className="foot-latency">14ms</span></span>
           <span className="foot-item">GRAPH ENGINE: <span className="foot-graph">NetworkX v3.2 (WebSocket Synced)</span></span>
+          <span className="foot-item foot-source">RAINFALL: <span className="foot-source-val">IMD</span> · TERRAIN: <span className="foot-source-val">Bhuvan DEM</span> · MODEL: <span className="foot-source-val">v2.1</span></span>
         </div>
         <div className="foot-right">
           <span className="foot-model">MODEL: <span className="model-name">GradientBoost-Landslide v4.1</span></span>
           <span className="foot-command">COMMAND CELL: WAYANAD DISTRICT HQ</span>
+          <span className="foot-timestamp">Last updated: {now.toLocaleTimeString()}</span>
         </div>
       </footer>
 

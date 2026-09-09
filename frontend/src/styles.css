@@ -319,7 +319,34 @@
 }
 .map-svg-wrap .topo-bg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .map-svg-wrap .network-svg { position: relative; z-index: 1; width: 100%; max-height: 100%; }
-.leaflet-map { height: 100%; width: 100%; min-height: 460px; z-index: 1; }
+.leaflet-container {
+  position: relative;
+  z-index: 0;
+}
+.leaflet-map { height: 100%; width: 100%; min-height: 460px; z-index: 1; position: relative; }
+
+.map-reset-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 1000;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--surface-container-lowest);
+  border: 2px solid var(--on-surface);
+  box-shadow: 2px 2px 0 0 var(--on-surface);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--on-surface);
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+.map-reset-btn:active { transform: translateY(1px); }
 
 .map-legend-card {
   position: absolute;
@@ -532,6 +559,104 @@
   letter-spacing: 0.04em;
 }
 .priority-row .pr-foot .road-status .dot { width: 6px; height: 6px; border-radius: 50%; }
+
+/* Vernacular alert card */
+.priority-row .pr-vernacular {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 6px;
+  padding: 8px 10px;
+  background: #FFFBEB;
+  border: 1px solid #B45309;
+  border-radius: 4px;
+}
+.priority-row .pr-vernacular-icon {
+  font-size: 16px;
+  color: #B45309;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.priority-row .pr-vernacular-text {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--on-surface);
+  line-height: 1.35;
+  overflow-wrap: break-word;
+}
+
+/* Explainability factor bars */
+.priority-row .pr-factors {
+  margin-top: 6px;
+  padding: 8px 10px;
+  background: var(--surface-container-low);
+  border: 1px solid var(--on-surface);
+  border-radius: 4px;
+}
+.priority-row .pr-factors-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.priority-row .pr-factors-title {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--on-surface-variant);
+}
+.priority-row .pr-factors-sub {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  color: var(--on-surface-variant);
+  text-transform: uppercase;
+}
+.priority-row .pr-factor-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.priority-row .pr-factor-row:last-child { margin-bottom: 0; }
+.priority-row .pr-factor-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--on-surface-variant);
+  min-width: 110px;
+  max-width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  overflow-wrap: break-word;
+}
+.priority-row .pr-factor-track {
+  flex: 1;
+  height: 8px;
+  background: var(--surface-dim);
+  border: 1px solid var(--on-surface);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.priority-row .pr-factor-fill {
+  height: 100%;
+  min-width: 2px;
+  border-radius: 2px 0 0 2px;
+  transition: width 0.3s ease;
+}
+.priority-row .pr-factor-pct {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--on-surface);
+  min-width: 36px;
+  text-align: right;
+}
 /* ---------- Advisory lockup ---------- */
 .advisory-lockup {
   border-top: 2px solid var(--on-surface);
@@ -613,6 +738,10 @@
   border: 2px solid var(--on-surface);
   background: var(--surface-container-lowest);
   box-shadow: 0 2px 0 0 var(--on-surface);
+}
+.simulator-card.sim-scroll {
+  max-height: 420px;
+  overflow-y: auto;
 }
 .simulator-card .sim-head {
   display: flex;
@@ -812,11 +941,29 @@
   letter-spacing: 0.06em;
   font-size: 10px;
 }
+.app-footer .foot-source {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--on-surface-variant);
+}
+.app-footer .foot-source-val {
+  color: var(--primary);
+  font-weight: 700;
+}
+.app-footer .foot-timestamp {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--on-surface-variant);
+  padding: 3px 8px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
 /* ---------- Dispatch modal ---------- */
 .dispatch-modal-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 50;
+  z-index: 9999;
   display: none;
   align-items: center;
   justify-content: center;
@@ -979,7 +1126,7 @@
   position: fixed;
   top: 16px;
   right: 16px;
-  z-index: 60;
+  z-index: 10000;
   max-width: 420px;
   transform: translateY(-130%);
   opacity: 0;
@@ -1136,6 +1283,8 @@
 }
 .infra-impact-table-wrap {
   overflow-x: auto;
+  max-height: 260px;
+  overflow-y: auto;
 }
 .infra-impact-table {
   width: 100%;
@@ -1177,6 +1326,36 @@
 .risk-moderate { background: #FFFBEB; color: #A16207; }
 .risk-high { background: #FFF7ED; color: #C2410C; }
 .risk-severe { background: #FEF2F2; color: #DC2626; }
+
+/* ---------- Infrastructure legend (colored swatches) ---------- */
+.infra-legend-swatches {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 12px;
+  background: var(--surface-container-lowest);
+  border: 2px solid var(--on-surface);
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+.infra-legend-swatches .infra-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--on-surface);
+}
+.infra-legend-swatches .swatch {
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
 
 /* ---------- Risk score explanation (expandable) ---------- */
 .risk-exp-head {

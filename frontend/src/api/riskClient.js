@@ -2,7 +2,7 @@
  * Risk data client.
  *
  * ALL network access for the dashboard goes through this module. The only
- * tunable is RISK_API_BASE -- point it at a different origin/path to swap the
+ * tunable is VITE_API_BASE_URL -- point it at a different origin/path to swap the
  * mock file for the real API without touching any component or view.
  *
  * The endpoint shape is the FastAPI document at /risk-map:
@@ -13,92 +13,202 @@
 
 /**
  * Base URL of the risk API. Resolution order (first non-empty wins):
- *   1. VITE_RISK_API_BASE (standard Vite public env var, set in Vercel).
+ *   1. VITE_API_BASE_URL (standard Vite public env var, set in Vercel/Render).
  *   2. Fallback http://localhost:8000 (local dev with the API on :8000).
  */
-const RUNTIME_BASE = import.meta.env.VITE_RISK_API_BASE;
+const RUNTIME_BASE = import.meta.env.VITE_API_BASE_URL;
 
-if (!RUNTIME_BASE && !import.meta.env.DEV) {
-  console.error(
-    "[riskClient] VITE_RISK_API_BASE is not set. " +
-    "Set it in Vercel environment variables to point to your backend URL."
+if (!RUNTIME_BASE) {
+  console.warn(
+    "[riskClient] VITE_API_BASE_URL is not set. " +
+      "Defaulting to http://localhost:8000. " +
+      "Set VITE_API_BASE_URL (e.g. in Vercel) to point at your real backend."
   );
 }
 
-export const RISK_API_BASE =
-  RUNTIME_BASE ||
-  (import.meta.env.DEV ? "http://localhost:8000" : "");
+// Default to the local FastAPI server so dev builds, `vite preview`, and the
+// committed dist bundle all work out of the box. Vercel/production overrides
+// this by setting VITE_API_BASE_URL to the deployed backend URL.
+export const RISK_API_BASE = RUNTIME_BASE || "http://localhost:8000";
+
+const RETRYABLE_COLD = new Set([404, 502, 503]);
+const RETRYABLE_WARM = new Set([502, 503]);
+const NEVER_RETRY = new Set([400, 401, 403, 422]);
+
+const DELAYS_COLD = [2000, 5000, 10000];
+const DELAYS_WARM = [1000];
+
+let isWarm = false;
+let warmingCount = 0;
+const warmingListeners = new Set();
+
+export function onWarmingChange(fn) {
+  warmingListeners.add(fn);
+  return () => warmingListeners.delete(fn);
+}
+
+function setWarming(active) {
+  if (active) {
+    warmingCount++;
+  } else {
+    warmingCount = Math.max(0, warmingCount - 1);
+  }
+  const isActive = warmingCount > 0;
+  warmingListeners.forEach((fn) => fn(isActive));
+}
+
+function createApiError(endpoint, res) {
+  const err = new Error(`Risk API ${endpoint} returned ${res.status} ${res.statusText}`);
+  err.status = res.status;
+  err.endpoint = endpoint;
+  return err;
+}
+
+async function apiFetch(path, options = {}) {
+  const controller = new AbortController();
+  const timeoutMs = options.timeout ?? 30000;
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(`${RISK_API_BASE}${path}`, {
+      ...options,
+      signal: controller.signal,
+    });
+    return res;
+  } catch (err) {
+    if (err.name === "AbortError") {
+      const e = new Error("Request timeout");
+      e.name = "AbortError";
+      throw e;
+    }
+    throw err;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function withRetry(fetchFn) {
+  const maxRetries = isWarm ? 1 : 3;
+  const delays = isWarm ? DELAYS_WARM : DELAYS_COLD;
+  let lastError;
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const result = await fetchFn();
+      isWarm = true;
+      setWarming(false);
+      return result;
+    } catch (err) {
+      lastError = err;
+      const status = err.status;
+
+      let shouldRetry = false;
+      if (attempt < maxRetries) {
+        if (err instanceof TypeError) {
+          shouldRetry = true;
+        } else if (err.name === "AbortError") {
+          shouldRetry = true;
+        } else if (status && !NEVER_RETRY.has(status)) {
+          shouldRetry = isWarm ? RETRYABLE_WARM.has(status) : RETRYABLE_COLD.has(status);
+        }
+      }
+
+      if (!shouldRetry) {
+        setWarming(false);
+        throw err;
+      }
+
+      setWarming(true);
+      const delay = delays[Math.min(attempt, delays.length - 1)];
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+
+  setWarming(false);
+  throw lastError;
+}
 
 /** Fetch the full risk document. Throws on non-2xx so callers can show errors. */
 export async function fetchRiskMap() {
-  const res = await fetch(`${RISK_API_BASE}/risk-map`, {
-    headers: { Accept: "application/json" },
+  return withRetry(async () => {
+    const res = await apiFetch("/risk-map", {
+      headers: { Accept: "application/json" },
+    });
+    if (!res.ok) {
+      throw createApiError("/risk-map", res);
+    }
+    return res.json();
   });
-  if (!res.ok) {
-    throw new Error(`Risk API /risk-map returned ${res.status} ${res.statusText}`);
-  }
-  return res.json();
 }
 
 /** Fetch infrastructure graph + stranded zones from the dedicated endpoint. */
 export async function fetchInfrastructure() {
-  const res = await fetch(`${RISK_API_BASE}/infrastructure`, {
-    headers: { Accept: "application/json" },
+  return withRetry(async () => {
+    const res = await apiFetch("/infrastructure", {
+      headers: { Accept: "application/json" },
+    });
+    if (!res.ok) {
+      throw createApiError("/infrastructure", res);
+    }
+    return res.json();
   });
-  if (!res.ok) {
-    throw new Error(`Risk API /infrastructure returned ${res.status} ${res.statusText}`);
-  }
-  return res.json();
 }
 
 /** Fetch a single location by id (used by the side panel deep-link). */
 export async function fetchRiskById(id) {
-  const res = await fetch(`${RISK_API_BASE}/risk/${encodeURIComponent(id)}`, {
-    headers: { Accept: "application/json" },
+  return withRetry(async () => {
+    const res = await apiFetch(`/risk/${encodeURIComponent(id)}`, {
+      headers: { Accept: "application/json" },
+    });
+    if (!res.ok) {
+      throw createApiError(`/risk/${id}`, res);
+    }
+    return res.json();
   });
-  if (!res.ok) {
-    throw new Error(`Risk API /risk/${id} returned ${res.status}`);
-  }
-  return res.json();
 }
 
 /** Fetch active high/severe alerts, sorted by severity (score desc). */
 export async function fetchActiveAlerts(minLevel = "high") {
-  const res = await fetch(
-    `${RISK_API_BASE}/alerts/active?min_level=${encodeURIComponent(minLevel)}`,
-    { headers: { Accept: "application/json" } },
-  );
-  if (!res.ok) {
-    throw new Error(`Risk API /alerts/active returned ${res.status}`);
-  }
-  return res.json();
+  return withRetry(async () => {
+    const res = await apiFetch(
+      `/alerts/active?min_level=${encodeURIComponent(minLevel)}`,
+      { headers: { Accept: "application/json" } }
+    );
+    if (!res.ok) {
+      throw createApiError("/alerts/active", res);
+    }
+    return res.json();
+  });
 }
 
 /** Fetch frontend config (breakpoints, thresholds, weights) for sliders. */
 export async function fetchConfig() {
-  const res = await fetch(`${RISK_API_BASE}/config`, {
-    headers: { Accept: "application/json" },
+  return withRetry(async () => {
+    const res = await apiFetch("/config", {
+      headers: { Accept: "application/json" },
+    });
+    if (!res.ok) {
+      throw createApiError("/config", res);
+    }
+    return res.json();
   });
-  if (!res.ok) {
-    throw new Error(`Risk API /config returned ${res.status}`);
-  }
-  return res.json();
 }
 
 /** Run a what-if simulation for a location with overridden factor values. */
 export async function fetchSimulate(locationId, overrides = {}) {
-  const res = await fetch(`${RISK_API_BASE}/simulate`, {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ location_id: locationId, overrides }),
+  return withRetry(async () => {
+    const res = await apiFetch("/simulate", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ location_id: locationId, overrides }),
+    });
+    if (!res.ok) {
+      throw createApiError("/simulate", res);
+    }
+    return res.json();
   });
-  if (!res.ok) {
-    throw new Error(`Risk API /simulate returned ${res.status}`);
-  }
-  return res.json();
 }
 
 /**
@@ -106,13 +216,15 @@ export async function fetchSimulate(locationId, overrides = {}) {
  * Returns the new total location count.
  */
 export async function fetchReload() {
-  const res = await fetch(`${RISK_API_BASE}/reload`, {
-    headers: { Accept: "application/json" },
+  return withRetry(async () => {
+    const res = await apiFetch("/reload", {
+      headers: { Accept: "application/json" },
+    });
+    if (!res.ok) {
+      throw createApiError("/reload", res);
+    }
+    return res.json();
   });
-  if (!res.ok) {
-    throw new Error(`Risk API /reload returned ${res.status}`);
-  }
-  return res.json();
 }
 
 /**
@@ -120,12 +232,14 @@ export async function fetchReload() {
  * evacuation routes for every zone.
  */
 export async function fetchImpactAssessment(radiusKm = 20) {
-  const res = await fetch(
-    `${RISK_API_BASE}/impact-assessment?radius_km=${encodeURIComponent(radiusKm)}`,
-    { headers: { Accept: "application/json" } },
-  );
-  if (!res.ok) {
-    throw new Error(`Risk API /impact-assessment returned ${res.status}`);
-  }
-  return res.json();
+  return withRetry(async () => {
+    const res = await apiFetch(
+      `/impact-assessment?radius_km=${encodeURIComponent(radiusKm)}`,
+      { headers: { Accept: "application/json" } }
+    );
+    if (!res.ok) {
+      throw createApiError("/impact-assessment", res);
+    }
+    return res.json();
+  });
 }

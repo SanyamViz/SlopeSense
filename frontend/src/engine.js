@@ -1,8 +1,16 @@
 import { levelColor } from "./constants/risk";
 
+export function computeHighSevereCount(locations) {
+  return locations.filter((l) => l.risk_level === "high" || l.risk_level === "severe").length;
+}
+
 function makeRow(loc, rank, opts) {
   if (!loc) return null;
   const trust = loc.trust_score || {};
+  const factors = (loc.factors || [])
+    .slice()
+    .sort((a, b) => (b.contribution ?? 0) - (a.contribution ?? 0))
+    .slice(0, 4);
   return {
     id: loc.location_id,
     rank,
@@ -16,6 +24,8 @@ function makeRow(loc, rank, opts) {
     trustBadgeBg: opts.trustBadgeBg, trustBadgeColor: opts.trustBadgeColor, trustColor: opts.trustColor,
     roadStatus: opts.roadStatus, roadColor: opts.roadColor,
     urgencyTag: opts.urgencyTag, urgencyTagStyle: opts.urgencyTagStyle,
+    factors,
+    localAlert: loc.alert?.message_local || loc.alert?.message_en || "",
   };
 }
 

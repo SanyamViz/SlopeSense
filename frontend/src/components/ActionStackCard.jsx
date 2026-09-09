@@ -1,4 +1,4 @@
-import { levelColor, RISK_LABELS } from "../constants/risk";
+import { levelColor, RISK_LABELS, factorLabel } from "../constants/risk";
 
 /** Priority Action Stack card with integrated ground advisory lockup. */
 export default function ActionStackCard({ rows, advisory, isSevere, onDispatch, className }) {
@@ -16,7 +16,7 @@ export default function ActionStackCard({ rows, advisory, isSevere, onDispatch, 
             <div className="pr-top">
               <div className="flex items-baseline gap-2">
                 <span className="pr-rank">{r.rank}</span>
-                <div>
+                <div style={{ flex: 1, minWidth: 0 }}>
                   <div className="flex items-center">
                     <span className="pr-name">{r.name}</span>
                     {r.urgencyTag && (
@@ -26,6 +26,12 @@ export default function ActionStackCard({ rows, advisory, isSevere, onDispatch, 
                     )}
                   </div>
                   <span className="pr-sub">{r.subtitle}</span>
+                  {r.localAlert && (
+                    <div className="pr-vernacular">
+                      <span className="pr-vernacular-icon material-symbols-outlined">volume_up</span>
+                      <span className="pr-vernacular-text">{r.localAlert}</span>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="flex flex-col items-end gap-0.5 shrink-0">
@@ -51,6 +57,33 @@ export default function ActionStackCard({ rows, advisory, isSevere, onDispatch, 
                 </span>
               </div>
             </div>
+            {r.factors && r.factors.length > 0 && (
+              <div className="pr-factors">
+                <div className="pr-factors-head">
+                  <span className="pr-factors-title">Risk factors</span>
+                  <span className="pr-factors-sub">Top contributors</span>
+                </div>
+                {r.factors.map((f, i) => {
+                  const maxContrib = 100;
+                  const pct = Math.min(Math.max(f.contribution, 0), 100);
+                  return (
+                    <div key={f.factor} className="pr-factor-row">
+                      <span className="pr-factor-label">{factorLabel(f.factor)}</span>
+                      <div className="pr-factor-track">
+                        <div
+                          className="pr-factor-fill"
+                          style={{
+                            width: `${pct}%`,
+                            background: i === 0 ? "#DC2626" : i === 1 ? "#EA580C" : i === 2 ? "#B45309" : "#0052FF",
+                          }}
+                        />
+                      </div>
+                      <span className="pr-factor-pct">{pct.toFixed(0)}%</span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
             <div className="pr-trust">
               <span className="trust-val" style={{ color: r.trustColor }}>
                 Trust Score: <strong>{r.trustText}</strong>
@@ -110,7 +143,6 @@ export default function ActionStackCard({ rows, advisory, isSevere, onDispatch, 
             </span>
           </div>
           <p className="adv-en">{advisory.en}</p>
-          <p className="adv-ml">{advisory.ml}</p>
           <div className="adv-foot">
             <span className="vhf">VHF RELAY CH: 156.800 MHz</span>
             <span className="armed">ALL REPEATERS ARMED</span>

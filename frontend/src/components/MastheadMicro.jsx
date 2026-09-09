@@ -1,7 +1,26 @@
+import { useEffect, useState } from "react";
 import { levelColor, RISK_LABELS, RISK_LEVELS } from "../constants/risk";
 
 /** Top micro bar / gazette metadata with live clock. */
-export default function MastheadMicro({ title, cycle, live }) {
+export default function MastheadMicro({ title, cycle }) {
+  const [live, setLive] = useState(() => formatTime());
+
+  useEffect(() => {
+    const id = setInterval(() => setLive(formatTime()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  function formatTime() {
+    const now = new Date();
+    return now.toLocaleTimeString("en-IN", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+      timeZone: "Asia/Kolkata",
+    }) + " IST";
+  }
+
   return (
     <div className="masthead-micro">
       <div className="flex items-center gap-3 flex-wrap">

@@ -15,6 +15,7 @@ export default function CrisisForecastSimulator({
   onReset,
   locations,
   selectedId,
+  tiles: defaultTiles,
 }) {
   const [sim, setSim] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -51,7 +52,7 @@ export default function CrisisForecastSimulator({
     const score = sim?.risk_score;
     const level = sim?.risk_level;
     if (score === undefined || !level) {
-      return [
+      return defaultTiles ?? [
         { key: "danger", value: "—", color: "#DC2626", bg: "#FEF2F2", label: "High/Severe Zones", labelColor: "#991B1B" },
         { key: "cutoff", value: "—", color: "#0284C7", bg: "#E0F2FE", label: "Cut-Off Wards", labelColor: "#0369A1" },
         { key: "priority", value: "—", color: "#0052FF", bg: "#FEF9C3", label: "Priority #1 Target", labelColor: "#003EC7" },
@@ -65,10 +66,10 @@ export default function CrisisForecastSimulator({
       { key: "delta", value: deltaStr, color: delta !== undefined && delta > 0 ? "#DC2626" : "#15803D", bg: (delta !== undefined && delta > 0 ? "#DC2626" : "#15803D") + "1f", label: "Delta vs baseline", labelColor: delta !== undefined && delta > 0 ? "#991B1B" : "#14532D" },
       { key: "sim", value: loading ? "..." : "LIVE", color: "#0052FF", bg: "#EFF6FF", label: selectedLocation ? selectedLocation.name : "Simulating", labelColor: "#003EC7" },
     ];
-  }, [sim, loading, selectedLocation]);
+  }, [sim, loading, selectedLocation, defaultTiles]);
 
   return (
-    <section className="simulator-card">
+    <section className="simulator-card sim-scroll">
       <div className="sim-head">
         <div>
           <div className="flex items-center gap-2">

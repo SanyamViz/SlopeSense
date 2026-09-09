@@ -1,4 +1,4 @@
-﻿import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
+﻿import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from "react-leaflet";
 import L from "leaflet";
 import { levelColor, scoreToLevel } from "../constants/risk";
 import SortToggle from "./SortToggle";
@@ -53,6 +53,50 @@ function makeMarkerHtml(color, level, selected) {
   </div>`;
 }
 
+function FitBounds({ locations }) {
+  const map = useMap();
+  const alertLocs = (locations || []).filter(
+    (l) => l.risk_level === "high" || l.risk_level === "severe"
+  );
+  if (alertLocs.length > 0) {
+    const bounds = L.latLngBounds(alertLocs.map((l) => [l.coordinates.lat, l.coordinates.lon]));
+    map.fitBounds(bounds, { padding: [40, 40], maxZoom: 12 });
+  } else if (locations.length > 0) {
+    const bounds = L.latLngBounds(locations.map((l) => [l.coordinates.lat, l.coordinates.lon]));
+    map.fitBounds(bounds, { padding: [40, 40], maxZoom: 12 });
+  }
+  return null;
+}
+
+function ResetView({ locations }) {
+  const map = useMap();
+  const handleClick = () => {
+    const alertLocs = (locations || []).filter(
+      (l) => l.risk_level === "high" || l.risk_level === "severe"
+    );
+    if (alertLocs.length > 0) {
+      const bounds = L.latLngBounds(alertLocs.map((l) => [l.coordinates.lat, l.coordinates.lon]));
+      map.fitBounds(bounds, { padding: [40, 40], maxZoom: 12 });
+    } else if (locations.length > 0) {
+      const bounds = L.latLngBounds(locations.map((l) => [l.coordinates.lat, l.coordinates.lon]));
+      map.fitBounds(bounds, { padding: [40, 40], maxZoom: 12 });
+    } else {
+      map.setView([10.5, 76.5], 7);
+    }
+  };
+  return (
+    <button
+      type="button"
+      className="map-reset-btn"
+      onClick={handleClick}
+      title="Reset view to alert markers"
+    >
+      <span className="material-symbols-outlined">center_focus_strong</span>
+      Reset View
+    </button>
+  );
+}
+
 function DeselectHandler({ onSelect }) {
   useMapEvents({ click() { onSelect(null); } });
   return null;
@@ -67,10 +111,12 @@ export default function MapView({ locations, selectedId, onSelect }) {
   return (
     <MapContainer center={[centreLat, centreLon]} zoom={7} minZoom={5} maxZoom={18} style={{ height: "100%", width: "100%", minHeight: "460px" }} zoomControl={false} doubleClickZoom={false}>
       <TileLayer url={TILE_URL} attribution={TILE_ATTR} />
+      <FitBounds locations={locations} />
       {locations.map((loc) => (
         <MarkerFor key={loc.location_id} loc={loc} selectedId={selectedId} onSelect={onSelect} />
       ))}
       <DeselectHandler onSelect={onSelect} />
+      <ResetView locations={locations} />
     </MapContainer>
   );
 }

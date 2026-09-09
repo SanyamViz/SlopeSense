@@ -18,12 +18,12 @@ map. It consumes the FastAPI backend at `http://localhost:8000/risk-map`.
 ## Swap mock → real API
 
 All network access is in `src/api/riskClient.js`. The only tunable is
-`VITE_RISK_API_BASE`, which must be set in your deployment environment
+`VITE_API_BASE_URL`, which must be set in your deployment environment
 (e.g. Vercel) to point at the backend URL:
 
 ```bash
 # Vercel Dashboard → Settings → Environment Variables
-VITE_RISK_API_BASE=https://your-backend-url.example.com
+VITE_API_BASE_URL=https://your-backend-url.example.com
 ```
 
 For local development it defaults to `http://localhost:8000`.
