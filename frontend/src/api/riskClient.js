@@ -31,6 +31,10 @@ if (!RUNTIME_BASE) {
 // this by setting VITE_API_BASE_URL to the deployed backend URL.
 export const RISK_API_BASE = RUNTIME_BASE || "http://localhost:8000";
 
+if (typeof window !== "undefined") {
+  console.info("[riskClient] RISK_API_BASE =", RISK_API_BASE);
+}
+
 const RETRYABLE_COLD = new Set([404, 502, 503]);
 const RETRYABLE_WARM = new Set([502, 503]);
 const NEVER_RETRY = new Set([400, 401, 403, 422]);
