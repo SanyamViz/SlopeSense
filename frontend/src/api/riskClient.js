@@ -16,7 +16,7 @@
  *   1. VITE_API_BASE_URL (standard Vite public env var, set in Vercel/Render).
  *   2. Fallback http://localhost:8000 (local dev with the API on :8000).
  */
-const RUNTIME_BASE = import.meta.env.VITE_API_BASE_URL;
+const RUNTIME_BASE = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
 
 if (!RUNTIME_BASE) {
   console.warn(
