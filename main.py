@@ -316,6 +316,7 @@ def dispatch(request: DispatchRequest):
         "TWILIO_WHATSAPP_FROM" if request.channel == "whatsapp" else "TWILIO_SMS_FROM",
         "",
     )
+    recipients = _split_recipients(os.environ.get("DISPATCH_RECIPIENTS", ""))
     logger.info(
         "Dispatch request: sector=%s location_id=%s channel=%s from_number=%s recipients=%d",
         request.sector, request.location_id, request.channel, from_number, len(recipients),
